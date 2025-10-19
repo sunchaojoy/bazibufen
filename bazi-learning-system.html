@@ -1,0 +1,2010 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>晨煦学习小屋 - 八字学习系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+        :root {
+            --primary-red: #dc2626;
+            --primary-gold: #f59e0b;
+            --bg-cream: #fefce8;
+            --bg-light: #fff7ed;
+            --text-primary: #1f2937;
+            --text-secondary: #4b5563;
+            --border-light: #fed7aa;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #fefce8 0%, #fff7ed 100%);
+            min-height: 100vh;
+        }
+
+        .serif-title {
+            font-family: 'Noto Serif SC', serif;
+        }
+
+        .module-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .module-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 20px -4px rgba(0, 0, 0, 0.15);
+        }
+
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-red), var(--primary-gold));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .module-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .module-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .module-1 { background: linear-gradient(135deg, #ef4444, #f97316); }
+        .module-2 { background: linear-gradient(135deg, #f59e0b, #eab308); }
+        .module-3 { background: linear-gradient(135deg, #22c55e, #16a34a); }
+        .module-4 { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        .module-5 { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .module-6 { background: linear-gradient(135deg, #ec4899, #db2777); }
+
+        .difficulty-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-left: 0.5rem;
+        }
+
+        .beginner { background: #dcfce7; color: #15803d; }
+        .intermediate { background: #fef3c7; color: #d97706; }
+        .advanced { background: #fee2e2; color: #dc2626; }
+
+        .progress-bar {
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-red), var(--primary-gold));
+            border-radius: 2px;
+            transition: width 0.6s ease;
+        }
+
+        .element-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin: 0.25rem;
+        }
+
+        .wood { background: #dcfce7; color: #15803d; }
+        .fire { background: #fee2e2; color: #dc2626; }
+        .earth { background: #fef3c7; color: #d97706; }
+        .metal { background: #f3f4f6; color: #4b5563; }
+        .water { background: #dbeafe; color: #2563eb; }
+
+        .section-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .section-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .table-custom {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .table-custom th {
+            background: var(--bg-light);
+            color: var(--text-primary);
+            font-weight: 600;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .table-custom td {
+            padding: 0.75rem 1rem;
+            text-align: center;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .table-custom tr:hover td {
+            background: var(--bg-cream);
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 100px;
+            left: 20px;
+            z-index: 40;
+            background: white;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .back-btn.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-scroll {
+            scroll-behavior: smooth;
+        }
+
+        .professional-tip {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border-left: 4px solid #3b82f6;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: var(--primary-red);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body class="nav-scroll">
+    <!-- 返回按钮 -->
+    <div class="back-btn" id="backBtn" onclick="showMainScreen()">
+        <i class="fas fa-arrow-left text-gray-600"></i>
+    </div>
+
+    <!-- 头部 -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-red-600 to-yellow-500 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-yin-yang text-white text-xl"></i>
+                    </div>
+                    <h1 class="serif-title text-2xl md:text-3xl font-bold text-gray-800">
+                        晨煦学习小屋
+                    </h1>
+                </div>
+                <div class="hidden md:flex items-center space-x-4">
+                    <span class="px-3 py-1 bg-red-100 text-red-600 rounded-full text-sm font-medium">
+                        学习系统
+                    </span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main class="container mx-auto px-4 py-8 max-w-6xl">
+
+        <!-- 主屏幕 - 模块选择 -->
+        <div id="mainScreen" class="section-content active">
+            <!-- 欢迎语 -->
+            <section class="text-center mb-12">
+                <h2 class="serif-title text-3xl font-bold text-gray-800 mb-4">
+                    探索八字奥秘 · 启迪智慧人生
+                </h2>
+                <p class="text-lg text-gray-600 mb-6">
+                    探索传统智慧，循序渐进学习，从零基础到熟练掌握
+                </p>
+                <div class="flex justify-center space-x-6 text-sm text-gray-500">
+                    <span><i class="fas fa-book mr-1"></i>丰富学习内容</span>
+                    <span><i class="fas fa-graduation-cap mr-1"></i>循序渐进学习</span>
+                    <span><i class="fas fa-clock mr-1"></i>自由安排时间</span>
+                </div>
+            </section>
+
+            <!-- 学习模块网格 -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                <!-- 模块1：基础概念 -->
+                <div class="module-card" onclick="showSection('basic-concepts')">
+                    <div class="module-icon module-1">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">
+                        基础概念入门
+                        <span class="difficulty-badge beginner">入门级</span>
+                    </h3>
+                    <p class="text-gray-600 mb-4">
+                        八字基础概念、天干地支、五行理论、十神关系等核心知识
+                    </p>
+                    <div class="flex items-center justify-between text-sm text-gray-500">
+                        <span><i class="fas fa-clock mr-1"></i>2-4小时</span>
+                        <span><i class="fas fa-layer-group mr-1"></i>5个单元</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- 模块2：排盘实务 -->
+                <div class="module-card" onclick="showSection('paili-practice')">
+                    <div class="module-icon module-2">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">
+                        排盘实务操作
+                        <span class="difficulty-badge beginner">入门级</span>
+                    </h3>
+                    <p class="text-gray-600 mb-4">
+                        年月日时四柱排盘方法、节气计算、时辰确定等实用技能
+                    </p>
+                    <div class="flex items-center justify-between text-sm text-gray-500">
+                        <span><i class="fas fa-clock mr-1"></i>3-5小时</span>
+                        <span><i class="fas fa-layer-group mr-1"></i>4个单元</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- 模块3：十神精解 -->
+                <div class="module-card" onclick="showSection('shishen-analysis')">
+                    <div class="module-icon module-3">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">
+                        十神精解分析
+                        <span class="difficulty-badge intermediate">进阶级</span>
+                    </h3>
+                    <p class="text-gray-600 mb-4">
+                        十神详细含义、组合关系、格局判断、用神选取等核心技法
+                    </p>
+                    <div class="flex items-center justify-between text-sm text-gray-500">
+                        <span><i class="fas fa-clock mr-1"></i>4-6小时</span>
+                        <span><i class="fas fa-layer-group mr-1"></i>6个单元</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- 模块4：格局命理 -->
+                <div class="module-card" onclick="showSection('geju-mingli')">
+                    <div class="module-icon module-4">
+                        <i class="fas fa-chess"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">
+                        格局命理体系
+                        <span class="difficulty-badge intermediate">进阶级</span>
+                    </h3>
+                    <p class="text-gray-600 mb-4">
+                        正格八格、特殊格局、成格破格、格局取用等高阶理论
+                    </p>
+                    <div class="flex items-center justify-between text-sm text-gray-500">
+                        <span><i class="fas fa-clock mr-1"></i>5-8小时</span>
+                        <span><i class="fas fa-layer-group mr-1"></i>7个单元</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- 模块5：大运流年 -->
+                <div class="module-card" onclick="showSection('dayun-liunian')">
+                    <div class="module-icon module-5">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">
+                        大运流年预测
+                        <span class="difficulty-badge advanced">高级</span>
+                    </h3>
+                    <p class="text-gray-600 mb-4">
+                        大运排法、流年断法、岁运并临、周期性规律等预测技法
+                    </p>
+                    <div class="flex items-center justify-between text-sm text-gray-500">
+                        <span><i class="fas fa-clock mr-1"></i>6-10小时</span>
+                        <span><i class="fas fa-layer-group mr-1"></i>8个单元</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- 模块6：实战应用 -->
+                <div class="module-card" onclick="showSection('practical-application')">
+                    <div class="module-icon module-6">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">
+                        实战应用案例
+                        <span class="difficulty-badge advanced">高级</span>
+                    </h3>
+                    <p class="text-gray-600 mb-4">
+                        婚姻感情、事业财运、健康疾病、子女教育等专项预测技法
+                    </p>
+                    <div class="flex items-center justify-between text-sm text-gray-500">
+                        <span><i class="fas fa-clock mr-1"></i>8-12小时</span>
+                        <span><i class="fas fa-layer-group mr-1"></i>10个单元</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 学习路径 -->
+            <section class="bg-gradient-to-r from-red-50 to-yellow-50 rounded-2xl p-8">
+                <h3 class="serif-title text-2xl font-bold text-gray-800 mb-6 text-center">
+                    <i class="fas fa-route text-yellow-500 mr-2"></i>
+                    学习进阶路径
+                </h3>
+                <div class="grid md:grid-cols-7 gap-4">
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-red-500 text-white rounded-full flex items-center justify-center mx-auto mb-2 font-bold">
+                            1
+                        </div>
+                        <div class="text-sm font-medium text-gray-700">现代入门</div>
+                        <div class="text-xs text-gray-500">1-2个月</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-orange-500 text-white rounded-full flex items-center justify-center mx-auto mb-2 font-bold">
+                            2
+                        </div>
+                        <div class="text-sm font-medium text-gray-700">古籍基础</div>
+                        <div class="text-xs text-gray-500">2-3个月</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-yellow-500 text-white rounded-full flex items-center justify-center mx-auto mb-2 font-bold">
+                            3
+                        </div>
+                        <div class="text-sm font-medium text-gray-700">格局深化</div>
+                        <div class="text-xs text-gray-500">2-3个月</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto mb-2 font-bold">
+                            4
+                        </div>
+                        <div class="text-sm font-medium text-gray-700">实战技法</div>
+                        <div class="text-xs text-gray-500">3-4个月</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center mx-auto mb-2 font-bold">
+                            5
+                        </div>
+                        <div class="text-sm font-medium text-gray-700">专题研究</div>
+                        <div class="text-xs text-gray-500">2-3个月</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-purple-500 text-white rounded-full flex items-center justify-center mx-auto mb-2 font-bold">
+                            6
+                        </div>
+                        <div class="text-sm font-medium text-gray-700">高阶哲学</div>
+                        <div class="text-xs text-gray-500">3-4个月</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-pink-500 text-white rounded-full flex items-center justify-center mx-auto mb-2 font-bold">
+                            7
+                        </div>
+                        <div class="text-sm font-medium text-gray-700">博览融通</div>
+                        <div class="text-xs text-gray-500">长期</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- 排盘实务部分 -->
+        <div id="paili-practice" class="section-content">
+            <div class="mb-8">
+                <h2 class="serif-title text-3xl font-bold text-gray-800 mb-4">
+                    排盘实务操作
+                </h2>
+                <p class="text-lg text-gray-600">
+                    掌握八字排盘的完整流程，准确推算四柱八字
+                </p>
+            </div>
+
+            <!-- 四柱概述 -->
+            <div class="bg-white rounded-xl p-6 mb-6 shadow-sm">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-columns text-orange-500 mr-3"></i>
+                    四柱八字概述
+                </h3>
+
+                <div class="professional-tip mb-4">
+                    <p class="text-sm text-blue-800">
+                        <strong>学习要点：</strong>四柱八字是命理学的基础，年柱为根，月柱为苗，日柱为花，时柱为果。四柱分别代表一个人不同年龄段的人生运势和不同的生活层面。排盘的准确性直接影响到后续论命的正确性。
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-4 gap-4 mb-6">
+                    <div class="text-center p-4 bg-red-50 rounded-lg border border-red-200">
+                        <div class="w-12 h-12 bg-red-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 font-bold">
+                            年
+                        </div>
+                        <h4 class="font-bold text-gray-800 mb-2">年柱</h4>
+                        <p class="text-sm text-gray-600 mb-2">祖上根基、早年运势</p>
+                        <div class="text-xs text-gray-500">
+                            <p>代表：1-16岁</p>
+                            <p>象征：祖先、父母、出身</p>
+                            <p>影响：童年、家庭背景</p>
+                        </div>
+                    </div>
+                    <div class="text-center p-4 bg-orange-50 rounded-lg border border-orange-200">
+                        <div class="w-12 h-12 bg-orange-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 font-bold">
+                            月
+                        </div>
+                        <h4 class="font-bold text-gray-800 mb-2">月柱</h4>
+                        <p class="text-sm text-gray-600 mb-2">父母兄弟、青年运势</p>
+                        <div class="text-xs text-gray-500">
+                            <p>代表：17-32岁</p>
+                            <p>象征：父母、事业起步</p>
+                            <p>影响：学业、事业初期</p>
+                        </div>
+                    </div>
+                    <div class="text-center p-4 bg-green-50 rounded-lg border border-green-200">
+                        <div class="w-12 h-12 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 font-bold">
+                            日
+                        </div>
+                        <h4 class="font-bold text-gray-800 mb-2">日柱</h4>
+                        <p class="text-sm text-gray-600 mb-2">自己配偶、中年运势</p>
+                        <div class="text-xs text-gray-500">
+                            <p>代表：33-48岁</p>
+                            <p>象征：本人、婚姻</p>
+                            <p>影响：性格、感情生活</p>
+                        </div>
+                    </div>
+                    <div class="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <div class="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 font-bold">
+                            时
+                        </div>
+                        <h4 class="font-bold text-gray-800 mb-2">时柱</h4>
+                        <p class="text-sm text-gray-600 mb-2">子女部下、晚年运势</p>
+                        <div class="text-xs text-gray-500">
+                            <p>代表：49岁以后</p>
+                            <p>象征：子女、晚年</p>
+                            <p>影响：子女运、晚年生活</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 排盘步骤详解 -->
+            <div class="bg-white rounded-xl p-6 mb-6 shadow-sm">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-list-ol text-blue-500 mr-3"></i>
+                    排盘步骤详解
+                </h3>
+
+                <div class="space-y-6">
+                    <!-- 步骤1：确定年柱 -->
+                    <div class="border-l-4 border-red-400 pl-4">
+                        <div class="flex items-start">
+                            <div class="step-number mr-3">1</div>
+                            <div class="flex-1">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-2">确定年柱</h4>
+                                <div class="bg-red-50 rounded-lg p-4 mb-3">
+                                    <h5 class="font-medium text-red-700 mb-2">基本原理</h5>
+                                    <p class="text-sm text-gray-700 mb-2">
+                                        年柱以农历立春为分界线，立春前属上年，立春后属当年。年柱干支按60年一甲子循环排列。
+                                    </p>
+                                    <p class="text-sm text-gray-700">
+                                        根据《渊海子平》，年柱代表太岁，掌管一年之吉凶，为八字之根基。
+                                    </p>
+                                </div>
+
+                                <div class="grid md:grid-cols-2 gap-4 mb-3">
+                                    <div class="bg-white border border-gray-200 rounded-lg p-3">
+                                        <h5 class="font-medium text-gray-700 mb-1">快速查表法</h5>
+                                        <p class="text-xs text-gray-600">使用万年历或排盘软件直接查找年柱干支</p>
+                                    </div>
+                                    <div class="bg-white border border-gray-200 rounded-lg p-3">
+                                        <h5 class="font-medium text-gray-700 mb-1">公式计算法</h5>
+                                        <p class="text-xs text-gray-600">通过天干地支推算公式计算年柱干支</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded">
+                                    <p class="text-sm text-yellow-800">
+                                        <strong>⚠️ 重要提醒：</strong>必须注意立春时间！例如1995年2月4日立春，此前出生仍属甲戌年，此后才为乙亥年。
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 步骤2：确定月柱 -->
+                    <div class="border-l-4 border-orange-400 pl-4">
+                        <div class="flex items-start">
+                            <div class="step-number mr-3">2</div>
+                            <div class="flex-1">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-2">确定月柱</h4>
+                                <div class="bg-orange-50 rounded-lg p-4 mb-3">
+                                    <h5 class="font-medium text-orange-700 mb-2">节气月柱法</h5>
+                                    <p class="text-sm text-gray-700 mb-2">
+                                        月柱按二十四节气划分，而非农历月份。每个月柱对应两个节气：
+                                    </p>
+                                    <ul class="text-sm text-gray-700 ml-4 space-y-1">
+                                        <li>• 寅月：立春到惊蛰（约2月4日-3月5日）</li>
+                                        <li>• 卯月：惊蛰到清明（约3月5日-4月4日）</li>
+                                        <li>• 辰月：清明到立夏（约4月4日-5月5日）</li>
+                                        <li>• 巳月：立夏到芒种（约5月5日-6月5日）</li>
+                                        <li>• 午月：芒种到小暑（约6月5日-7月6日）</li>
+                                        <li>• 未月：小暑到立秋（约7月6日-8月7日）</li>
+                                    </ul>
+                                </div>
+
+                                <div class="bg-blue-50 border-l-4 border-blue-400 p-3 rounded">
+                                    <p class="text-sm text-blue-800">
+                                        <strong>💡 学习技巧：</strong>月柱天干按"五虎遁"口诀推算："甲己之年丙作首，乙庚之岁戊为头，丙辛之岁寻庚上，丁壬壬位顺行流，若问戊癸何方发，甲寅之上好追求。"
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 步骤3：确定日柱 -->
+                    <div class="border-l-4 border-green-400 pl-4">
+                        <div class="flex items-start">
+                            <div class="step-number mr-3">3</div>
+                            <div class="flex-1">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-2">确定日柱</h4>
+                                <div class="bg-green-50 rounded-lg p-4 mb-3">
+                                    <h5 class="font-medium text-green-700 mb-2">日柱计算方法</h5>
+                                    <p class="text-sm text-gray-700 mb-2">
+                                        日柱按60天一循环，从公元前2697年甲子日开始计算。日柱的天干称为"日主"或"日元"，代表命主本人。
+                                    </p>
+                                    <p class="text-sm text-gray-700">
+                                        根据《子平真诠》，日主为八字之核心，所有十神关系都围绕日主展开，日主的强弱旺衰直接关系到整个八字的格局高低。
+                                    </p>
+                                </div>
+
+                                <div class="grid md:grid-cols-2 gap-4 mb-3">
+                                    <div class="bg-white border border-gray-200 rounded-lg p-3">
+                                        <h5 class="font-medium text-gray-700 mb-1">公式法</h5>
+                                        <p class="text-xs text-gray-600">使用公历日期通过公式计算日柱干支</p>
+                                    </div>
+                                    <div class="bg-white border border-gray-200 rounded-lg p-3">
+                                        <h5 class="font-medium text-gray-700 mb-1">查表法</h5>
+                                        <p class="text-xs text-gray-600">使用万年历直接查找对应日柱</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 步骤4：确定时柱 -->
+                    <div class="border-l-4 border-blue-400 pl-4">
+                        <div class="flex items-start">
+                            <div class="step-number mr-4">4</div>
+                            <div class="flex-1">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-2">确定时柱</h4>
+                                <div class="bg-blue-50 rounded-lg p-4 mb-3">
+                                    <h5 class="font-medium text-blue-700 mb-2">时辰划分</h5>
+                                    <p class="text-sm text-gray-700 mb-2">
+                                        一天分为十二时辰，每时辰2小时，从23点开始计算：
+                                    </p>
+                                    <div class="grid md:grid-cols-3 gap-2 text-sm">
+                                        <div>• 子时：23:00-01:00</div>
+                                        <div>• 丑时：01:00-03:00</div>
+                                        <div>• 寅时：03:00-05:00</div>
+                                        <div>• 卯时：05:00-07:00</div>
+                                        <div>• 辰时：07:00-09:00</div>
+                                        <div>• 巳时：09:00-11:00</div>
+                                        <div>• 午时：11:00-13:00</div>
+                                        <div>• 未时：13:00-15:00</div>
+                                        <div>• 申时：15:00-17:00</div>
+                                        <div>• 酉时：17:00-19:00</div>
+                                        <div>• 戌时：19:00-21:00</div>
+                                        <div>• 亥时：21:00-23:00</div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-purple-50 border-l-4 border-purple-400 p-3 rounded">
+                                    <p class="text-sm text-purple-800">
+                                        <strong>🎯 学习要点：</strong>时柱天干按"五鼠遁"口诀推算："甲己还加甲，乙庚丙作初，丙辛从戊起，丁壬庚子居，戊癸何方发，壬子是真途。"
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 完整示例 -->
+            <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                    完整排盘示例
+                </h3>
+
+                <div class="bg-white rounded-lg p-4 mb-4">
+                    <p class="text-gray-700 mb-3">
+                        <strong>出生时间：</strong>公历1990年5月15日14时30分
+                    </p>
+                    <p class="text-gray-700 mb-4">
+                        <strong>排盘过程：</strong>
+                    </p>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-center">
+                            <span class="font-medium text-red-600 w-16">年柱：</span>
+                            <span>1990年立春后，庚午年</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="font-medium text-orange-600 w-16">月柱：</span>
+                            <span>5月15日在立夏后，属辛巳月</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="font-medium text-green-600 w-16">日柱：</span>
+                            <span>5月15日对应丁亥日，日主为丁火</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="font-medium text-blue-600 w-16">时柱：</span>
+                            <span>14:30为未时，按五鼠遁得乙未时</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center p-6 bg-white rounded-lg">
+                    <div class="text-lg font-bold text-gray-800 mb-3">完整八字：</div>
+                    <div class="text-3xl font-bold text-gray-900 mb-2">庚午 辛巳 丁亥 乙未</div>
+                    <div class="text-sm text-gray-600">
+                        日主：丁火 | 出生季节：巳火月 | 五行分布：金2木1火3水1土2
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 十神精解部分 -->
+        <div id="shishen-analysis" class="section-content">
+            <div class="mb-8">
+                <h2 class="serif-title text-3xl font-bold text-gray-800 mb-4">
+                    十神精解分析
+                </h2>
+                <p class="text-lg text-gray-600">
+                    深入理解十神体系，掌握八字论命的核心分析工具
+                </p>
+            </div>
+
+            <!-- 十神总论 -->
+            <div class="bg-white rounded-xl p-6 mb-6 shadow-sm">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-star text-purple-500 mr-3"></i>
+                    十神体系总论
+                </h3>
+
+                <div class="professional-tip mb-4">
+                    <p class="text-sm text-blue-800">
+                        <strong>学习要点：</strong>根据经典理论，十神是基于日主与其他七个干支的五行生克关系而确立的。十神不仅是简单的五行关系，更代表了社会属性、功能特征和人生际遇。十神分析是八字论命的精髓所在。
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-3">十神推导原理</h4>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-700 mb-3">
+                                十神以日主为中心，根据与其他干支的五行生克关系和阴阳异同来确定：
+                            </p>
+                            <ul class="text-sm text-gray-700 space-y-2">
+                                <li><strong>生我者：</strong>同性为偏印，异性为正印</li>
+                                <li><strong>我生者：</strong>同性为食神，异性为伤官</li>
+                                <li><strong>克我者：</strong>同性为七杀，异性为正官</li>
+                                <li><strong>我克者：</strong>同性为偏财，异性为正财</li>
+                                <li><strong>同我者：</strong>同性为比肩，异性为劫财</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-3">十神分析重要性</h4>
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-700 mb-3">
+                                十神分析可以全面了解一个人的：
+                            </p>
+                            <ul class="text-sm text-gray-700 space-y-1">
+                                <li>• 性格特征和行为模式</li>
+                                <li>• 事业方向和职业适合性</li>
+                                <li>• 人际关系和社交能力</li>
+                                <li>• 财运特征和理财方式</li>
+                                <li>• 感情婚姻和家庭状况</li>
+                                <li>• 健康状况和体质特点</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 十神详解 -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                <!-- 正官详解 -->
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+                    <div class="flex items-center mb-3">
+                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-blue-600 font-bold">正官</span>
+                        </div>
+                        <div class="text-2xl">👨‍💼</div>
+                    </div>
+                    <h4 class="font-bold text-gray-800 mb-3">正官详解</h4>
+                    <div class="space-y-2 text-sm text-gray-600">
+                        <p><strong>基本定义：</strong>克制日主的异性五行</p>
+                        <p><strong>核心特征：</strong>正当约束、管理能力、责任感、社会地位</p>
+                        <p><strong>正面表现：</strong>正直可靠、有责任心、管理能力强、受人尊敬</p>
+                        <p><strong>负面表现：</strong>保守压抑、缺乏创新、过于谨慎、压力过大</p>
+                        <p><strong>对应领域：</strong>公务员、管理工作、法律、教育等稳定职业</p>
+                        <p><strong>人际关系：</strong>上司、长辈、丈夫（女命）、子女（男命）</p>
+                    </div>
+                </div>
+
+                <!-- 七杀详解 -->
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+                    <div class="flex items-center mb-3">
+                        <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-red-600 font-bold">七杀</span>
+                        </div>
+                        <div class="text-2xl">⚔️</div>
+                    </div>
+                    <h4 class="font-bold text-gray-800 mb-3">七杀详解</h4>
+                    <div class="space-y-2 text-sm text-gray-600">
+                        <p><strong>基本定义：</strong>克制日主的同性五行</p>
+                        <p><strong>核心特征：</strong>权威威严、挑战压力、魄力决断、权力欲望</p>
+                        <p><strong>正面表现：</strong>有魄力、决断力强、不畏挑战、执行力强</p>
+                        <p><strong>负面表现：</strong>过于霸道、易冲动、压力大、有小人</p>
+                        <p><strong>对应领域：</strong>军警、法律、体育、企业家等竞争性行业</p>
+                        <p><strong>人际关系：</strong>竞争对手、小人、挑战者、威权人物</p>
+                    </div>
+                </div>
+
+                <!-- 正财详解 -->
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+                    <div class="flex items-center mb-3">
+                        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-green-600 font-bold">正财</span>
+                        </div>
+                        <div class="text-2xl">💰</div>
+                    </div>
+                    <h4 class="font-bold text-gray-800 mb-3">正财详解</h4>
+                    <div class="space-y-2 text-sm text-gray-600">
+                        <p><strong>基本定义：</strong>日主所克的异性五行</p>
+                        <p><strong>核心特征：</strong>稳定财富、节俭务实、理财能力、物质基础</p>
+                        <p><strong>正面表现：</strong>理财能力强、勤俭持家、稳定可靠、脚踏实地</p>
+                        <p><strong>负面表现：</strong>过于保守、吝啬、缺乏弹性、贪图物质</p>
+                        <p><strong>对应领域：</strong>金融、会计、实业、贸易等稳定行业</p>
+                        <p><strong>人际关系：</strong>妻子（男命）、稳定合作伙伴、下属</p>
+                    </div>
+                </div>
+
+                <!-- 偏财详解 -->
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+                    <div class="flex items-center mb-3">
+                        <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-yellow-600 font-bold">偏财</span>
+                        </div>
+                        <div class="text-2xl">💎</div>
+                    </div>
+                    <h4 class="font-bold text-gray-800 mb-3">偏财详解</h4>
+                    <div class="space-y-2 text-sm text-gray-600">
+                        <p><strong>基本定义：</strong>日主所克的同性五行</p>
+                        <p><strong>核心特征：</strong>意外之财、商业机会、慷慨机敏、投机能力</p>
+                        <p><strong>正面表现：</strong>善经营、人缘好、慷慨大方、机会把握强</p>
+                        <p><strong>负面表现：</strong>挥霍浪费、投机过度、感情复杂、不稳定</p>
+                        <p><strong>对应领域：</strong>商业、贸易、投资、销售等机会性行业</p>
+                        <p><strong>人际关系：</strong>情人（男命）、商业伙伴、客户</p>
+                    </div>
+                </div>
+
+                <!-- 正印详解 -->
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+                    <div class="flex items-center mb-3">
+                        <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-purple-600 font-bold">正印</span>
+                        </div>
+                        <div class="text-2xl">📚</div>
+                    </div>
+                    <h4 class="font-bold text-gray-800 mb-3">正印详解</h4>
+                    <div class="space-y-2 text-sm text-gray-600">
+                        <p><strong>基本定义：</strong>生助日主的异性五行</p>
+                        <p><strong>核心特征：</strong>学习知识、贵人相助、保护关怀、依赖性</p>
+                        <p><strong>正面表现：</strong>学习能力强、有贵人、仁慈善良、受人爱护</p>
+                        <p><strong>负面表现：</strong>依赖性强、懒惰、缺乏主见、过于理想化</p>
+                        <p><strong>对应领域：</strong>教育、文化、研究、咨询等知识型行业</p>
+                        <p><strong>人际关系：</strong>母亲、老师、长辈、贵人、保护者</p>
+                    </div>
+                </div>
+
+                <!-- 偏印详解 -->
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+                    <div class="flex items-center mb-3">
+                        <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-indigo-600 font-bold">偏印</span>
+                        </div>
+                        <div class="text-2xl">🔍</div>
+                    </div>
+                    <h4 class="font-bold text-gray-800 mb-3">偏印详解</h4>
+                    <div class="space-y-2 text-sm text-gray-600">
+                        <p><strong>基本定义：</strong>生助日主的同性五行</p>
+                        <p><strong>核心特征：</strong>专业技能、独特思维、孤独聪明、多才多艺</p>
+                        <p><strong>正面表现：</strong>专业技能强、聪明机智、创新能力强</p>
+                        <p><strong>负面表现：</strong>孤僻冷漠、多疑、缺乏人情味、学而不精</p>
+                        <p><strong>对应领域：</strong>专业技术、设计、艺术、咨询等特殊技能</p>
+                        <p><strong>人际关系：</strong>非传统老师、特殊关系、精神导师</p>
+                    </div>
+                </div>
+
+                <!-- 比肩详解 -->
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+                    <div class="flex items-center mb-3">
+                        <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-gray-600 font-bold">比肩</span>
+                        </div>
+                        <div class="text-2xl">🤝</div>
+                    </div>
+                    <h4 class="font-bold text-gray-800 mb-3">比肩详解</h4>
+                    <div class="space-y-2 text-sm text-gray-600">
+                        <p><strong>基本定义：</strong>与日主相同的同性五行</p>
+                        <p><strong>核心特征：</strong>朋友同辈、自尊竞争、独立自信、合作能力</p>
+                        <p><strong>正面表现：</strong>朋友多、人缘好、独立性强、有合作精神</p>
+                        <p><strong>负面表现：</strong>竞争激烈、固执己见、破财、面子重</p>
+                        <p><strong>对应领域：</strong>团队合作、合伙经营、服务业等</p>
+                        <p><strong>人际关系：</strong>朋友、同事、同辈、兄弟姐妹、竞争对手</p>
+                    </div>
+                </div>
+
+                <!-- 劫财详解 -->
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+                    <div class="flex items-center mb-3">
+                        <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-orange-600 font-bold">劫财</span>
+                        </div>
+                        <div class="text-2xl">🔄</div>
+                    </div>
+                    <h4 class="font-bold text-gray-800 mb-3">劫财详解</h4>
+                    <div class="space-y-2 text-sm text-gray-600">
+                        <p><strong>基本定义：</strong>与日主相同的异性五行</p>
+                        <p><strong>核心特征：</strong>争夺消耗、社交活跃、冲动热情、破财风险</p>
+                        <p><strong>正面表现：</strong>社交能力强、热情大方、行动力强、应变能力</p>
+                        <p><strong>负面表现：</strong>容易破财、冲动、争斗、缺乏耐心</p>
+                        <p><strong>对应领域：</strong>销售、公关、娱乐等社交性行业</p>
+                        <p><strong>人际关系：</strong>争夺者、热情朋友、消耗关系</p>
+                    </div>
+                </div>
+
+                <!-- 食神详解 -->
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+                    <div class="flex items-center mb-3">
+                        <div class="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-pink-600 font-bold">食神</span>
+                        </div>
+                        <div class="text-2xl">🎨</div>
+                    </div>
+                    <h4 class="font-bold text-gray-800 mb-3">食神详解</h4>
+                    <div class="space-y-2 text-sm text-gray-600">
+                        <p><strong>基本定义：</strong>日主所生的同性五行</p>
+                        <p><strong>核心特征：</strong>艺术享受、表达创造、乐观温和、口福美食</p>
+                        <p><strong>正面表现：</strong>多才多艺、乐观开朗、善于表达、生活品质高</p>
+                        <p><strong>负面表现：</strong>贪图享乐、懒散、过于理想化、缺乏毅力</p>
+                        <p><strong>对应领域：</strong>艺术、娱乐、餐饮、设计等创意行业</p>
+                        <p><strong>人际关系：</strong>下属（女命）、子女、艺术家、享受关系</p>
+                    </div>
+                </div>
+
+                <!-- 伤官详解 -->
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+                    <div class="flex items-center mb-3">
+                        <div class="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-teal-600 font-bold">伤官</span>
+                        </div>
+                        <div class="text-2xl">💡</div>
+                    </div>
+                    <h4 class="font-bold text-gray-800 mb-3">伤官详解</h4>
+                    <div class="space-y-2 text-sm text-gray-600">
+                        <p><strong>基本定义：</strong>日主所生的异性五行</p>
+                        <p><strong>核心特征：</strong>聪明才智、创新叛逆、表达能力、挑战权威</p>
+                        <p><strong>正面表现：</strong>聪明机智、创新能力强、口才好、不拘一格</p>
+                        <p><strong>负面表现：</strong>叛逆、言语尖锐、挑战权威、感情波折</p>
+                        <p><strong>对应领域：</strong>技术、创新、媒体、艺术等需要创意的行业</p>
+                        <p><strong>人际关系：</strong>下属（男命）、智慧挑战者、创新伙伴</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 十神组合分析 -->
+            <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-puzzle-piece text-purple-500 mr-2"></i>
+                    十神组合分析要点
+                </h3>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-700 mb-3">十神配合原则</h4>
+                        <ul class="text-sm text-gray-700 space-y-2">
+                            <li>• <strong>官印相生：</strong>正官配正印，文武双全，事业有成</li>
+                            <li>• <strong>财官相生：</strong>正财生正官，富贵双全，名利双收</li>
+                            <li>• <strong>杀印相生：</strong>七杀配正印，化杀为权，威望崇高</li>
+                            <li>• <strong>食神制杀：</strong>食神制七杀，智能显威，技艺超群</li>
+                            <li>• <strong>伤官配印：</strong>伤官配正印，技艺精湛，才华横溢</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-white rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-700 mb-3">十神平衡要点</h4>
+                        <ul class="text-sm text-gray-700 space-y-2">
+                            <li>• <strong>扶抑适宜：</strong>日主弱需印比扶助，日主强需官杀抑制</li>
+                            <li>• <strong>调候适中：</strong>寒暖燥湿需要调解，五行均衡发展</li>
+                            <li>• <strong>通关顺畅：</strong>相冲相克需要通关，流通生化为佳</li>
+                            <li>• <strong>格局清纯：</strong>用神明确，忌神受制，组合和谐</li>
+                            <li>• <strong>五行有情：</strong>相生相合为有情，相克相冲为无情</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 格局命理部分 -->
+        <div id="geju-mingli" class="section-content">
+            <div class="mb-8">
+                <h2 class="serif-title text-3xl font-bold text-gray-800 mb-4">
+                    格局命理体系
+                </h2>
+                <p class="text-lg text-gray-600">
+                    学习八字格局理论，掌握高层次命理分析方法
+                </p>
+            </div>
+
+            <!-- 格局概述 -->
+            <div class="bg-white rounded-xl p-6 mb-6 shadow-sm">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-chess text-blue-500 mr-3"></i>
+                    格局理论基础
+                </h3>
+
+                <div class="professional-tip mb-4">
+                    <p class="text-sm text-blue-800">
+                        <strong>专业要点：</strong>格局论命是八字的高阶理论，根据《子平真诠》、《渊海子平》等经典，格局是八字整体结构的体现。格局高低决定了一个人的人生层次和成就大小。学习格局需要掌握八格正局和特殊格局的识别方法。
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-3">格局定义与分类</h4>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-700 mb-3">
+                                格局是八字结构的高度概括，主要分为：
+                            </p>
+                            <ul class="text-sm text-gray-700 space-y-2">
+                                <li><strong>正格八格：</strong>正官格、七杀格、正财格、偏财格、正印格、偏印格、食神格、伤官格</li>
+                                <li><strong>特殊格局：</strong>从格、化格、合格、冲格、刑格等</li>
+                                <li><strong>变格：</strong>由正格转化而来的特殊格局</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-3">格局判断原则</h4>
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-700 mb-3">
+                                判断格局的基本原则：
+                            </p>
+                            <ul class="text-sm text-gray-700 space-y-1">
+                                <li>• 以月令为主，看月令藏干透出何神</li>
+                                <li>• 日主强弱决定格局成立与否</li>
+                                <li>• 配合得宜为成格，配合失宜为破格</li>
+                                <li>• 用神有力格局高，忌神受制格局佳</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 正格八格详解 -->
+            <div class="bg-white rounded-xl p-6 mb-6 shadow-sm">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">
+                    正格八格详解
+                </h3>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- 正官格 -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold text-blue-600 mb-2">正官格</h4>
+                        <div class="text-sm text-gray-600 space-y-2">
+                            <p><strong>成立条件：</strong>月令透出正官，或有正官成格</p>
+                            <p><strong>格局特征：</strong>品性端正，有管理能力，适合仕途</p>
+                            <p><strong>喜忌：</strong>喜印星护官，喜财生官；忌伤官见官</p>
+                            <p><strong>成就：</strong>多从事管理工作，有社会地位</p>
+                        </div>
+                    </div>
+
+                    <!-- 七杀格 -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold text-red-600 mb-2">七杀格</h4>
+                        <div class="text-sm text-gray-600 space-y-2">
+                            <p><strong>成立条件：</strong>月令透出七杀，或七杀成格</p>
+                            <p><strong>格局特征：</strong>有魄力，威严，适合军警法律</p>
+                            <p><strong>喜忌：</strong>喜食神制杀，喜印星化杀；忌官杀混杂</p>
+                            <p><strong>成就：</strong>多在竞争性行业成就，有权威地位</p>
+                        </div>
+                    </div>
+
+                    <!-- 正财格 -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold text-green-600 mb-2">正财格</h4>
+                        <div class="text-sm text-gray-600 space-y-2">
+                            <p><strong>成立条件：</strong>月令透出正财，或有正财成格</p>
+                            <p><strong>格局特征：</strong>勤俭持家，理财能力强，稳重踏实</p>
+                            <p><strong>喜忌：</strong>喜官星护财，喜食伤生财；忌比劫夺财</p>
+                            <p><strong>成就：</strong>多在实业、金融等领域，财富稳定</p>
+                        </div>
+                    </div>
+
+                    <!-- 偏财格 -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold text-yellow-600 mb-2">偏财格</h4>
+                        <div class="text-sm text-gray-600 space-y-2">
+                            <p><strong>成立条件：</strong>月令透出偏财，或有偏财成格</p>
+                            <p><strong>格局特征：</strong>善经营，慷慨，有商业头脑</p>
+                            <p><strong>喜忌：</strong>喜食伤生财，喜官星护财；忌比劫夺财</p>
+                            <p><strong>成就：</strong>多在商业贸易，有意外收获</p>
+                        </div>
+                    </div>
+
+                    <!-- 正印格 -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold text-purple-600 mb-2">正印格</h4>
+                        <div class="text-sm text-gray-600 space-y-2">
+                            <p><strong>成立条件：</strong>月令透出正印，或有正印成格</p>
+                            <p><strong>格局特征：</strong>学习能力强，有贵人，仁慈善良</p>
+                            <p><strong>喜忌：</strong>喜官星生印，喜比肩护印；忌财星坏印</p>
+                            <p><strong>成就：</strong>多在教育文化领域，有学问地位</p>
+                        </div>
+                    </div>
+
+                    <!-- 偏印格 -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold text-indigo-600 mb-2">偏印格</h4>
+                        <div class="text-sm text-gray-600 space-y-2">
+                            <p><strong>成立条件：</strong>月令透出偏印，或有偏印成格</p>
+                            <p><strong>格局特征：</strong>专业技能强，聪明，有独特见解</p>
+                            <p><strong>喜忌：</strong>喜食神制印，喜七杀；忌财星破印</p>
+                            <p><strong>成就：</strong>多在专业技术领域，有特殊成就</p>
+                        </div>
+                    </div>
+
+                    <!-- 食神格 -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold text-pink-600 mb-2">食神格</h4>
+                        <div class="text-sm text-gray-600 space-y-2">
+                            <p><strong>成立条件：</strong>月令透出食神，或有食神成格</p>
+                            <p><strong>格局特征：</strong>多才多艺，乐观，善于表达</p>
+                            <p><strong>喜忌：</strong>喜财星流通，喜印星制食；忌枭神夺食</p>
+                            <p><strong>成就：</strong>多在艺术娱乐领域，生活享受</p>
+                        </div>
+                    </div>
+
+                    <!-- 伤官格 -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold text-teal-600 mb-2">伤官格</h4>
+                        <div class="text-sm text-gray-600 space-y-2">
+                            <p><strong>成立条件：</strong>月令透出伤官，或有伤官成格</p>
+                            <p><strong>格局特征：</strong>聪明才智，创新，挑战权威</p>
+                            <p><strong>喜忌：</strong>喜财星泄伤，喜印星制伤；忌见官星</p>
+                            <p><strong>成就：</strong>多在技术创新领域，有特殊才能</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 特殊格局 -->
+            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-crown text-yellow-500 mr-2"></i>
+                    特殊格局简介
+                </h3>
+
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="bg-white rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-700 mb-2">从格</h4>
+                        <p class="text-sm text-gray-600">包括从财、从官、从儿、从势等，日主无根，从旺神而论</p>
+                    </div>
+                    <div class="bg-white rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-700 mb-2">化格</h4>
+                        <p class="text-sm text-gray-600">如甲己化土、乙庚化金等，天干五合化气成功</p>
+                    </div>
+                    <div class="bg-white rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-700 mb-2">合格</h4>
+                        <p class="text-sm text-gray-600">地支三合、六合、天干五合等，合而成格</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 大运流年部分 -->
+        <div id="dayun-liunian" class="section-content">
+            <div class="mb-8">
+                <h2 class="serif-title text-3xl font-bold text-gray-800 mb-4">
+                    大运流年预测
+                </h2>
+                <p class="text-lg text-gray-600">
+                    学习运势预测方法，掌握人生周期性规律
+                </p>
+            </div>
+
+            <!-- 大运理论 -->
+            <div class="bg-white rounded-xl p-6 mb-6 shadow-sm">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-chart-line text-purple-500 mr-3"></i>
+                    大运理论基础
+                </h3>
+
+                <div class="professional-tip mb-4">
+                    <p class="text-sm text-blue-800">
+                        <strong>专业要点：</strong>根据《穷通宝鉴》、《滴天髓》等经典，大运是人生不同阶段的运势走向。大运的吉凶决定了一个人在特定时期的基本运势。大运与原局八字的关系、大运之间的接续关系，以及大运与流年的关系，都是预测的关键。
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-3">大运排法</h4>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-700 mb-3">
+                                大运排布的基本规律：
+                            </p>
+                            <ul class="text-sm text-gray-700 space-y-2">
+                                <li><strong>起运时间：</strong>男女起运年龄不同，按节气计算</li>
+                                <li><strong>大运排列：</strong>阳年男顺行，阴年女逆行；反之则反</li>
+                                <li><strong>大运年限：</strong>每步大运管十年，依次接续</li>
+                                <li><strong>大运干支：</strong>按月柱干支顺序排布</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-3">大运与原局关系</h4>
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-700 mb-3">
+                                大运对原局的影响：
+                            </p>
+                            <ul class="text-sm text-gray-700 space-y-1">
+                                <li>• <strong>助运：</strong>大运生助原局用神，运势上升</li>
+                                <li>• <strong>忌运：</strong>大运生助原局忌神，运势下降</li>
+                                <li>• <strong>调运：</strong>大运调节原局寒暖燥湿，运势平衡</li>
+                                <li>• <strong>冲运：</strong>大运冲克原局，运势变动较大</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 流年理论 -->
+            <div class="bg-white rounded-xl p-6 mb-6 shadow-sm">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-calendar text-green-500 mr-3"></i>
+                    流年分析方法
+                </h3>
+
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-3">流年干支作用</h4>
+                        <div class="bg-green-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-700 mb-3">
+                                流年对八字的影响：
+                            </p>
+                            <ul class="text-sm text-gray-700 space-y-2">
+                                <li><strong>天干影响：</strong>流年天干主要影响外部环境</li>
+                                <li><strong>地支影响：</strong>流年地支主要影响内部环境</li>
+                                <li><strong>冲合刑害：</strong>与原局产生各种关系</li>
+                                <li><strong>岁运并临：</strong>大运与流年相同，影响加倍</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-3">流年吉凶判断</h4>
+                        <div class="bg-yellow-50 rounded-lg p-4">
+                            <p class="text-sm text-gray-700 mb-3">
+                                流年吉凶的判断要点：
+                            </p>
+                            <ul class="text-sm text-gray-700 space-y-1">
+                                <li>• <strong>用神到位：</strong>流年生助用神为吉</li>
+                                <li>• <strong>忌神猖狂：</strong>流年生助忌神为凶</li>
+                                <li>• <strong>冲克用神：</strong>流年冲克用神不利</li>
+                                <li>• <strong>合住忌神：</strong>流年合住忌神为吉</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 流年示例 -->
+                <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-4">
+                    <h4 class="font-semibold text-gray-700 mb-3">流年分析示例</h4>
+                    <div class="text-sm text-gray-700">
+                        <p class="mb-2"><strong>原局：</strong>庚午 辛巳 丁亥 乙未（日主丁火）</p>
+                        <p class="mb-2"><strong>2024甲辰流年：</strong></p>
+                        <ul class="ml-4 space-y-1">
+                            <li>• 甲木为正印，生助丁火日主，利于学习事业</li>
+                            <li>• 辰土为食神，泄火生金，利于表达创造</li>
+                            <li>• 辰亥相冲，冲克日支，感情家庭有变动</li>
+                            <li>• 甲木生火，整体运势向上发展</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 岁运周期规律 -->
+            <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-sync text-purple-500 mr-2"></i>
+                    岁运周期规律
+                </h3>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-700 mb-3">十年大运周期</h4>
+                        <ul class="text-sm text-gray-700 space-y-2">
+                            <li>• 每步大运管十年，有明显的阶段性特征</li>
+                            <li>• 大运交接时期通常有较大的人生变动</li>
+                            <li>• 好运期间把握机会，坏运期间谨慎应对</li>
+                            <li>• 大运决定大趋势，流年决定具体事件</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-white rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-700 mb-3">流年周期特点</h4>
+                        <ul class="text-sm text-gray-700 space-y-2">
+                            <li>• 流年影响直接且短暂，主要针对当年</li>
+                            <li>• 每年流年都会带来新的机遇和挑战</li>
+                            <li>• 流年与月柱的关系影响当年运势</li>
+                            <li>• 流年干支组合决定当年的基本性质</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 实战应用部分 -->
+        <div id="practical-application" class="section-content">
+            <div class="mb-8">
+                <h2 class="serif-title text-3xl font-bold text-gray-800 mb-4">
+                    实战应用案例
+                </h2>
+                <p class="text-lg text-gray-600">
+                    综合运用所学知识，进行实际八字案例分析
+                </p>
+            </div>
+
+            <!-- 综合分析案例 -->
+            <div class="bg-white rounded-xl p-6 mb-6 shadow-sm">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-users text-pink-500 mr-3"></i>
+                    综合分析案例演示
+                </h3>
+
+                <div class="professional-tip mb-4">
+                    <p class="text-sm text-blue-800">
+                        <strong>专业要点：</strong>实战案例分析需要综合运用排盘、十神、格局、大运等各方面知识。一个好的分析应该包括：八字基本特征、格局判断、用神确定、大运走势、具体预测等几个部分。分析时要注意理论与实践相结合，避免机械套用公式。
+                    </p>
+                </div>
+
+                <!-- 完整案例分析 -->
+                <div class="space-y-6">
+                    <!-- 案例基本信息 -->
+                    <div class="bg-blue-50 rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-700 mb-3">案例一：事业成功人士</h4>
+                        <div class="grid md:grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p><strong>基本信息：</strong>男，1985年3月10日上午8时</p>
+                                <p><strong>八字：</strong>乙丑 己卯 甲辰 丁卯</p>
+                                <p><strong>日主：</strong>甲木（生于卯月得令）</p>
+                            </div>
+                            <div>
+                                <p><strong>五行分布：</strong>木3火1土3金0水1</p>
+                                <p><strong>格局特征：</strong>正官格，身旺用官</p>
+                                <p><strong>用神：</strong>正官（土）、正财（土）</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 分析过程 -->
+                    <div class="bg-green-50 rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-700 mb-3">分析过程</h4>
+                        <div class="space-y-3 text-sm text-gray-700">
+                            <div>
+                                <p><strong>1. 日主分析：</strong>甲木生于卯月，得时令之助，又见比肩乙木，日主偏旺。</p>
+                            </div>
+                            <div>
+                                <p><strong>2. 格局判断：</strong>月令卯木藏乙木，但时干透出丁火，年柱乙木，以官星土为用神，形成正官格。</p>
+                            </div>
+                            <div>
+                                <p><strong>3. 十神分析：</strong>正官己土透月干，正财丁火透时干，七杀丑土，比肩乙木，组合较为和谐。</p>
+                            </div>
+                            <div>
+                                <p><strong>4. 用神确定：</strong>日主偏旺，宜克泄耗为用。官星土可克制日主，财星火可耗泄日主，故以火土为用神。</p>
+                            </div>
+                            <div>
+                                <p><strong>5. 大运走势：</strong>早年运走西方金地，官杀旺相，学业事业有成；中年运走南方火地，财运亨通；晚年运走北方水地，需防健康问题。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 性格与运势预测 -->
+                    <div class="bg-yellow-50 rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-700 mb-3">性格特征与运势预测</h4>
+                        <div class="grid md:grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <h5 class="font-medium text-gray-700 mb-2">性格特征：</h5>
+                                <ul class="text-gray-700 space-y-1">
+                                    <li>• 正官透干：正直可靠，有责任心</li>
+                                    <li>• 甲木日主：刚直不阿，有领导才能</li>
+                                    <li>• 财星透时：重义轻利，理财能力强</li>
+                                    <li>• 官印相生：文武双全，适合管理</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h5 class="font-medium text-gray-700 mb-2">运势预测：</h5>
+                                <ul class="text-gray-700 space-y-1">
+                                    <li>• 事业：适合管理工作，有社会地位</li>
+                                    <li>• 财运：中年财运亨通，晚年富裕</li>
+                                    <li>• 婚姻：配偶贤惠，家庭和谐</li>
+                                    <li>• 健康：注意肝胆和脾胃保健</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 验证与反馈 -->
+                    <div class="bg-purple-50 rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-700 mb-3">实际验证</h4>
+                        <p class="text-sm text-gray-700">
+                            该人士确实在一家大型企业担任高管职务，事业有成，收入稳定，家庭和谐。30-40岁期间财运特别旺盛，符合大运走势分析。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 专项预测技法 -->
+            <div class="bg-white rounded-xl p-6 shadow-sm">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">
+                    专项预测技法
+                </h3>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- 婚姻预测 -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-700 mb-3 flex items-center">
+                            <span class="text-pink-500 mr-2">💕</span>婚姻感情预测
+                        </h4>
+                        <div class="text-sm text-gray-600 space-y-2">
+                            <p><strong>男命看财：</strong>正财为妻，偏财为情人</p>
+                            <p><strong>女命看官：</strong>正官为夫，七杀为非正缘</p>
+                            <p><strong>夫妻宫：</strong>日柱地支为夫妻宫</p>
+                            <p><strong>婚姻质量：</strong>看财官与日主关系</p>
+                        </div>
+                    </div>
+
+                    <!-- 事业预测 -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-700 mb-3 flex items-center">
+                            <span class="text-blue-500 mr-2">💼</span>事业发展预测
+                        </h4>
+                        <div class="text-sm text-gray-600 space-y-2">
+                            <p><strong>官星：</strong>正官主稳定，七杀主权力</p>
+                            <p><strong>印星：</strong>正印主文职，偏印主技能</p>
+                            <p><strong>食伤：</strong>主才华技艺，表达能力</p>
+                            <p><strong>格局高低：</strong>决定事业成就大小</p>
+                        </div>
+                    </div>
+
+                    <!-- 财运预测 -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-700 mb-3 flex items-center">
+                            <span class="text-green-500 mr-2">💰</span>财运状况预测
+                        </h4>
+                        <div class="text-sm text-gray-600 space-y-2">
+                            <p><strong>财星：</strong>正财主稳定，偏财主横财</p>
+                            <p><strong>财库：</strong>辰戌丑未为四库</p>
+                            <p><strong>食伤生财：</strong>才华转化财富</p>
+                            <p><strong>比劫夺财：</strong>防破财损失</p>
+                        </div>
+                    </div>
+
+                    <!-- 健康预测 -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-700 mb-3 flex items-center">
+                            <span class="text-red-500 mr-2">🏥</span>健康状况预测
+                        </h4>
+                        <div class="text-sm text-gray-600 space-y-2">
+                            <p><strong>五行缺失：</strong>相关脏腑易出问题</p>
+                            <p><strong>五行过旺：</strong>也容易有疾病</p>
+                            <p><strong>冲克刑害：</strong>易有意外伤害</p>
+                            <p><strong>调候用神：</strong>影响体质强弱</p>
+                        </div>
+                    </div>
+
+                    <!-- 子女预测 -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-700 mb-3 flex items-center">
+                            <span class="text-purple-500 mr-2">👶</span>子女关系预测
+                        </h4>
+                        <div class="text-sm text-gray-600 space-y-2">
+                            <p><strong>男命看官：</strong>正官为子，七杀为女</p>
+                            <p><strong>女命看伤：</strong>伤官为子，食神为女</p>
+                            <p><strong>时柱：</strong>子女宫，看子女运势</p>
+                            <p><strong>子女星：</strong>与日主关系决定缘分</p>
+                        </div>
+                    </div>
+
+                    <!-- 流年预测 -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-700 mb-3 flex items-center">
+                            <span class="text-orange-500 mr-2">📅</span>流年吉凶预测
+                        </h4>
+                        <div class="text-sm text-gray-600 space-y-2">
+                            <p><strong>流年干支：</strong>与原局作用关系</p>
+                            <p><strong>岁运并临：</strong>重大变动年份</p>
+                            <p><strong>神煞配合：</strong>流年神煞影响</p>
+                            <p><strong>周期规律：</strong>十年大运趋势</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 基础概念部分 -->
+        <div id="basic-concepts" class="section-content">
+            <div class="mb-8">
+                <h2 class="serif-title text-3xl font-bold text-gray-800 mb-4">
+                    基础概念入门
+                </h2>
+                <p class="text-lg text-gray-600">
+                    掌握八字的核心基础概念，为深入学习打下坚实基础
+                </p>
+            </div>
+
+            <!-- 天干地支系统 -->
+            <div class="bg-white rounded-xl p-6 mb-6 shadow-sm">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-yin-yang text-blue-500 mr-3"></i>
+                    天干地支系统
+                </h3>
+
+                <div class="professional-tip mb-4">
+                    <p class="text-sm text-blue-800">
+                        <strong>专业要点：</strong>天干地支是八字的基础符号系统，天干为阳，地支为阴，干支组合构成时空坐标体系。根据《子平真诠》等古籍，干支不仅是计时符号，更蕴含着宇宙能量分布规律。
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-3">天干（10个）</h4>
+                        <div class="overflow-x-auto">
+                            <table class="table-custom">
+                                <thead>
+                                    <tr>
+                                        <th>天干</th>
+                                        <th>五行</th>
+                                        <th>阴阳</th>
+                                        <th>意象</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="font-bold">甲</td>
+                                        <td><span class="element-badge wood">木</span></td>
+                                        <td>阳</td>
+                                        <td class="text-left">栋梁之木，参天大树</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">乙</td>
+                                        <td><span class="element-badge wood">木</span></td>
+                                        <td>阴</td>
+                                        <td class="text-left">花草藤萝，柔韧之木</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">丙</td>
+                                        <td><span class="element-badge fire">火</span></td>
+                                        <td>阳</td>
+                                        <td class="text-left">太阳之火，普照之光</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">丁</td>
+                                        <td><span class="element-badge fire">火</span></td>
+                                        <td>阴</td>
+                                        <td class="text-left">灯烛之火，温暖之光</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">戊</td>
+                                        <td><span class="element-badge earth">土</span></td>
+                                        <td>阳</td>
+                                        <td class="text-left">城墙之土，厚重之土</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">己</td>
+                                        <td><span class="element-badge earth">土</span></td>
+                                        <td>阴</td>
+                                        <td class="text-left">田园之土，滋养之土</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">庚</td>
+                                        <td><span class="element-badge metal">金</span></td>
+                                        <td>阳</td>
+                                        <td class="text-left">斧钺之金，刚健之金</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">辛</td>
+                                        <td><span class="element-badge metal">金</span></td>
+                                        <td>阴</td>
+                                        <td class="text-left">首饰之金，温润之金</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">壬</td>
+                                        <td><span class="element-badge water">水</span></td>
+                                        <td>阳</td>
+                                        <td class="text-left">江河之水，奔腾之水</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">癸</td>
+                                        <td><span class="element-badge water">水</span></td>
+                                        <td>阴</td>
+                                        <td class="text-left">雨露之水，滋润之水</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-3">地支（12个）</h4>
+                        <div class="overflow-x-auto">
+                            <table class="table-custom">
+                                <thead>
+                                    <tr>
+                                        <th>地支</th>
+                                        <th>五行</th>
+                                        <th>生肖</th>
+                                        <th>时辰</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="font-bold">子</td>
+                                        <td><span class="element-badge water">水</span></td>
+                                        <td>🐭 鼠</td>
+                                        <td>23:00-01:00</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">丑</td>
+                                        <td><span class="element-badge earth">土</span></td>
+                                        <td>🐮 牛</td>
+                                        <td>01:00-03:00</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">寅</td>
+                                        <td><span class="element-badge wood">木</span></td>
+                                        <td>🐯 虎</td>
+                                        <td>03:00-05:00</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">卯</td>
+                                        <td><span class="element-badge wood">木</span></td>
+                                        <td>🐰 兔</td>
+                                        <td>05:00-07:00</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">辰</td>
+                                        <td><span class="element-badge earth">土</span></td>
+                                        <td>🐲 龙</td>
+                                        <td>07:00-09:00</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">巳</td>
+                                        <td><span class="element-badge fire">火</span></td>
+                                        <td>🐍 蛇</td>
+                                        <td>09:00-11:00</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">午</td>
+                                        <td><span class="element-badge fire">火</span></td>
+                                        <td>🐴 马</td>
+                                        <td>11:00-13:00</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">未</td>
+                                        <td><span class="element-badge earth">土</span></td>
+                                        <td>🐏 羊</td>
+                                        <td>13:00-15:00</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">申</td>
+                                        <td><span class="element-badge metal">金</span></td>
+                                        <td>🐒 猴</td>
+                                        <td>15:00-17:00</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">酉</td>
+                                        <td><span class="element-badge metal">金</span></td>
+                                        <td>🐔 鸡</td>
+                                        <td>17:00-19:00</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">戌</td>
+                                        <td><span class="element-badge earth">土</span></td>
+                                        <td>🐕 狗</td>
+                                        <td>19:00-21:00</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-bold">亥</td>
+                                        <td><span class="element-badge water">水</span></td>
+                                        <td>🐷 猪</td>
+                                        <td>21:00-23:00</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+                    <p class="text-sm text-yellow-800">
+                        <strong>重要概念：</strong>干支不仅是一个符号系统，更是一个完整的宇宙能量模型。天干代表天体运行的影响，地支代表地球环境的能量分布，干支组合构成了一个时空坐标系，用于描述出生时刻的宇宙能量状态。
+                    </p>
+                </div>
+            </div>
+
+            <!-- 五行理论 -->
+            <div class="bg-white rounded-xl p-6 mb-6 shadow-sm">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-circle-nodes text-green-500 mr-3"></i>
+                    五行生克制化
+                </h3>
+
+                <div class="professional-tip mb-4">
+                    <p class="text-sm text-blue-800">
+                        <strong>专业要点：</strong>五行理论是八字分析的核心逻辑体系。根据《渊海子平》等经典，五行之间不仅有相生相克的关系，还有相制、相化、相冲、相合、相刑、相害等复杂关系，构成了动态平衡的能量系统。
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-3">五行特性</h4>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                                <span class="font-medium"><span class="element-badge wood">木</span> 木</span>
+                                <span class="text-sm text-gray-600">生长、升发、条达、舒畅</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg">
+                                <span class="font-medium"><span class="element-badge fire">火</span> 火</span>
+                                <span class="text-sm text-gray-600">温热、上炎、光明、变化</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+                                <span class="font-medium"><span class="element-badge earth">土</span> 土</span>
+                                <span class="text-sm text-gray-600">承载、生化、受纳、厚德</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <span class="font-medium"><span class="element-badge metal">金</span> 金</span>
+                                <span class="text-sm text-gray-600">收敛、肃杀、清洁、坚固</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                                <span class="font-medium"><span class="element-badge water">水</span> 水</span>
+                                <span class="text-sm text-gray-600">滋润、下行、寒凉、闭藏</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-3">五行关系</h4>
+                        <div class="space-y-3">
+                            <div class="p-3 bg-green-50 rounded-lg">
+                                <h5 class="font-medium text-green-700 mb-1">相生关系</h5>
+                                <p class="text-sm text-gray-600">木生火 → 火生土 → 土生金 → 金生水 → 水生木</p>
+                                <p class="text-xs text-gray-500 mt-1">母子关系，滋生助长</p>
+                            </div>
+                            <div class="p-3 bg-red-50 rounded-lg">
+                                <h5 class="font-medium text-red-700 mb-1">相克关系</h5>
+                                <p class="text-sm text-gray-600">木克土 → 土克水 → 水克火 → 火克金 → 金克木</p>
+                                <p class="text-xs text-gray-500 mt-1">制约关系，保持平衡</p>
+                            </div>
+                            <div class="p-3 bg-blue-50 rounded-lg">
+                                <h5 class="font-medium text-blue-700 mb-1">其他关系</h5>
+                                <p class="text-sm text-gray-600">相冲：对立冲突 | 相合：结合统一</p>
+                                <p class="text-sm text-gray-600">相刑：相互刑伤 | 相害：相互损害</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 十神系统 -->
+            <div class="bg-white rounded-xl p-6 mb-6 shadow-sm">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-star text-purple-500 mr-3"></i>
+                    十神系统详解
+                </h3>
+
+                <div class="professional-tip mb-4">
+                    <p class="text-sm text-blue-800">
+                        <strong>专业要点：</strong>十神是八字论命的核心体系，根据《子平真诠》定义，十神是基于日主与其他干支的五行阴阳关系而确定的社会关系和功能属性。十神分析是判断性格特征、事业方向、人际关系、财富状况的主要依据。
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                    <!-- 正官 -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold text-blue-600 mb-2">正官</h4>
+                        <div class="text-sm text-gray-600 space-y-1">
+                            <p><strong>定义：</strong>克制日主的异性五行</p>
+                            <p><strong>象征：</strong>事业、地位、纪律、约束</p>
+                            <p><strong>特征：</strong>正直、守纪、有责任心</p>
+                            <p><strong>有利：</strong>管理能力、社会地位</p>
+                            <p><strong>不利：</strong>压力、束缚、保守</p>
+                        </div>
+                    </div>
+
+                    <!-- 七杀 -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold text-red-600 mb-2">七杀</h4>
+                        <div class="text-sm text-gray-600 space-y-1">
+                            <p><strong>定义：</strong>克制日主的同性五行</p>
+                            <p><strong>象征：</strong>权力、威严、挑战、压力</p>
+                            <p><strong>特征：</strong>果断、威严、有魄力</p>
+                            <p><strong>有利：</strong>权威、执行力</p>
+                            <p><strong>不利：</strong>暴力、血光、小人</p>
+                        </div>
+                    </div>
+
+                    <!-- 正财 -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold text-green-600 mb-2">正财</h4>
+                        <div class="text-sm text-gray-600 space-y-1">
+                            <p><strong>定义：</strong>日主所克的异性五行</p>
+                            <p><strong>象征：</strong>稳定财富、节俭、务实</p>
+                            <p><strong>特征：</strong>稳重、务实、理财能力强</p>
+                            <p><strong>有利：</strong>稳定收入、财富积累</p>
+                            <p><strong>不利：</strong>吝啬、保守</p>
+                        </div>
+                    </div>
+
+                    <!-- 偏财 -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold text-yellow-600 mb-2">偏财</h4>
+                        <div class="text-sm text-gray-600 space-y-1">
+                            <p><strong>定义：</strong>日主所克的同性五行</p>
+                            <p><strong>象征：</strong>意外之财、商业、投机</p>
+                            <p><strong>特征：</strong>慷慨、机敏、善经营</p>
+                            <p><strong>有利：</strong>商业机会、意外收获</p>
+                            <p><strong>不利：</strong>挥霍、风流</p>
+                        </div>
+                    </div>
+
+                    <!-- 正印 -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold text-purple-600 mb-2">正印</h4>
+                        <div class="text-sm text-gray-600 space-y-1">
+                            <p><strong>定义：</strong>生助日主的异性五行</p>
+                            <p><strong>象征：</strong>学习、知识、贵人、保护</p>
+                            <p><strong>特征：</strong>仁慈、好学、依赖性</p>
+                            <p><strong>有利：</strong>学习、贵人相助</p>
+                            <p><strong>不利：</strong>懒惰、依赖</p>
+                        </div>
+                    </div>
+
+                    <!-- 偏印 -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold text-indigo-600 mb-2">偏印</h4>
+                        <div class="text-sm text-gray-600 space-y-1">
+                            <p><strong>定义：</strong>生助日主的同性五行</p>
+                            <p><strong>象征：</strong>专业技能、独特思维</p>
+                            <p><strong>特征：</strong>聪明、孤僻、多才多艺</p>
+                            <p><strong>有利：</strong>专业技能、创新</p>
+                            <p><strong>不利：</strong>孤独、冷漠</p>
+                        </div>
+                    </div>
+
+                    <!-- 比肩 -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold text-gray-600 mb-2">比肩</h4>
+                        <div class="text-sm text-gray-600 space-y-1">
+                            <p><strong>定义：</strong>与日主相同的同性五行</p>
+                            <p><strong>象征：</strong>朋友、同辈、竞争</p>
+                            <p><strong>特征：</strong>自信、独立、固执</p>
+                            <p><strong>有利：</strong>朋友多、人缘好</p>
+                            <p><strong>不利：</strong>竞争、破财</p>
+                        </div>
+                    </div>
+
+                    <!-- 劫财 -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold text-orange-600 mb-2">劫财</h4>
+                        <div class="text-sm text-gray-600 space-y-1">
+                            <p><strong>定义：</strong>与日主相同的异性五行</p>
+                            <p><strong>象征：</strong>争夺、社交、消耗</p>
+                            <p><strong>特征：</strong>热情、冲动、善交际</p>
+                            <p><strong>有利：</strong>社交能力、行动力</p>
+                            <p><strong>不利：</strong>破财、争斗</p>
+                        </div>
+                    </div>
+
+                    <!-- 食神 -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-bold text-pink-600 mb-2">食神</h4>
+                        <div class="text-sm text-gray-600 space-y-1">
+                            <p><strong>定义：</strong>日主所生的同性五行</p>
+                            <p><strong>象征：</strong>享受、艺术、表达</p>
+                            <p><strong>特征：</strong>温和、乐观、多才多艺</p>
+                            <p><strong>有利：</strong>艺术天赋、享受生活</p>
+                            <p><strong>不利：</strong>贪图享乐</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
+                    <p class="text-sm text-blue-800">
+                        <strong>学习要点：</strong>十神分析是八字论命的核心技能。需要掌握每个十神的基本含义、在不同组合中的作用、以及十神之间的相互关系。建议多分析实际案例，理解十神在现实生活中的具体体现。
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-white border-t border-gray-200 py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-600 mb-4">
+                <i class="fas fa-yin-yang text-red-500 mr-2"></i>
+                晨煦学习小屋 - 探索传统文化智慧
+            </p>
+            <p class="text-sm text-gray-500">
+                内容仅供学习参考，请理性看待传统文化
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // 显示特定内容部分
+        function showSection(sectionId) {
+            // 隐藏所有部分
+            document.querySelectorAll('.section-content').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // 显示选中部分
+            document.getElementById(sectionId).classList.add('active');
+
+            // 显示返回按钮
+            document.getElementById('backBtn').classList.add('visible');
+
+            // 滚动到顶部
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 返回主屏幕
+        function showMainScreen() {
+            // 隐藏所有部分
+            document.querySelectorAll('.section-content').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // 显示主屏幕
+            document.getElementById('mainScreen').classList.add('active');
+
+            // 隐藏返回按钮
+            document.getElementById('backBtn').classList.remove('visible');
+        }
+
+        // 添加卡片点击动画效果
+        document.querySelectorAll('.module-card').forEach(card => {
+            card.addEventListener('click', function() {
+                // 添加点击波纹效果
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // 进度条动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // 模拟进度条动画
+                    const progressBars = entry.target.querySelectorAll('.progress-fill');
+                    progressBars.forEach(bar => {
+                        const width = bar.style.width;
+                        bar.style.width = '0%';
+                        setTimeout(() => {
+                            bar.style.width = width;
+                        }, 100);
+                    });
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.module-card').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

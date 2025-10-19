@@ -1,0 +1,2329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第四阶段实战技法八字分析系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .app-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        .feature-badges {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .section-container {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .section-container:hover {
+            transform: translateY(-5px);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .icon {
+            font-size: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .optional-inputs {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .primary-btn,
+        .secondary-btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .primary-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .secondary-btn {
+            background: #6c757d;
+            color: white;
+        }
+
+        .secondary-btn:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .method-selection {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .method-selection h3 {
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+
+        .method-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .method-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .method-option:hover {
+            border-color: #667eea;
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.1);
+        }
+
+        .method-option input[type="checkbox"] {
+            margin-top: 0.2rem;
+        }
+
+        .method-name {
+            font-weight: 600;
+            color: #2c3e50;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .method-desc {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .analysis-progress {
+            margin-bottom: 2rem;
+        }
+
+        .progress-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .analysis-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .step {
+            text-align: center;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .step.processing {
+            border-color: #ffc107;
+            background: #fff3cd;
+        }
+
+        .step.completed {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+
+        .step-icon {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-text {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .step-status {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .results-container {
+            min-height: 200px;
+        }
+
+        .placeholder {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .placeholder-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .analysis-results {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .result-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .result-title:hover {
+            color: #667eea;
+        }
+
+        .result-content {
+            line-height: 1.6;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-item .label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .info-item .value {
+            color: #2c3e50;
+        }
+
+        .bazi-display {
+            font-family: 'KaiTi', '楷体', serif;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .xiang-analysis {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .xiang-category {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .xiang-category h4 {
+            margin-bottom: 0.8rem;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+
+        .xiang-items {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .xiang-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .pillar-name {
+            font-weight: 600;
+            color: #667eea;
+            min-width: 60px;
+        }
+
+        .xiang-content {
+            color: #555;
+            flex: 1;
+        }
+
+        .xiang-images {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .image-tag {
+            background: #667eea;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+        }
+
+        .philosophy-items {
+            display: grid;
+            gap: 0.8rem;
+        }
+
+        .philosophy-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .concept {
+            font-weight: 600;
+            color: #667eea;
+            min-width: 80px;
+        }
+
+        .explanation {
+            color: #555;
+            flex: 1;
+        }
+
+        .bingyao-result,
+        .qixing-result,
+        .caixing-result {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .bing,
+        .yao,
+        .plan,
+        .qixing-detail,
+        .caixing-detail {
+            padding: 0.8rem;
+            background: white;
+            border-radius: 6px;
+            border-left: 3px solid #667eea;
+        }
+
+        .validation-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .metric {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+
+        .metric-label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 0.3rem;
+        }
+
+        .metric-value {
+            font-size: 1.2rem;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .validation-advice {
+            background: #fff3cd;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .comprehensive-advice {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .advice-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .advice-title {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .advice-content {
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .results-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .export-btn,
+        .print-btn,
+        .share-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .export-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .export-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .print-btn {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .print-btn:hover {
+            background: #138496;
+            transform: translateY(-2px);
+        }
+
+        .share-btn {
+            background: #6f42c1;
+            color: white;
+        }
+
+        .share-btn:hover {
+            background: #5a32a3;
+            transform: translateY(-2px);
+        }
+
+        .history-controls {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .clear-history-btn,
+        .export-history-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .clear-history-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .clear-history-btn:hover {
+            background: #c82333;
+        }
+
+        .export-history-btn {
+            background: #007bff;
+            color: white;
+        }
+
+        .export-history-btn:hover {
+            background: #0056b3;
+        }
+
+        .history-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            background: white;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .history-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .history-date {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .history-bazi {
+            font-family: 'KaiTi', '楷体', serif;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .view-btn,
+        .delete-btn {
+            padding: 0.3rem 0.8rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .view-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .view-btn:hover {
+            background: #218838;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #c82333;
+        }
+
+        .help-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-btn:hover {
+            color: #667eea;
+        }
+
+        .help-panels {
+            position: relative;
+        }
+
+        .help-panel {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .help-panel.active {
+            display: block;
+        }
+
+        .help-panel h3 {
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+
+        .help-panel ul,
+        .help-panel ol {
+            margin-left: 2rem;
+            line-height: 1.6;
+        }
+
+        .help-panel li {
+            margin-bottom: 0.5rem;
+        }
+
+        .method-descriptions {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .method-desc {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .method-desc h4 {
+            margin-bottom: 0.5rem;
+            color: #667eea;
+        }
+
+        .case-showcases {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .showcase {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .showcase h4 {
+            margin-bottom: 0.5rem;
+            color: #667eea;
+        }
+
+        .showcase p {
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+
+        .message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .message-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .message-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .message-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1rem;
+            }
+
+            .section-container {
+                padding: 1.5rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .analysis-steps {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .method-options {
+                grid-template-columns: 1fr;
+            }
+
+            .help-tabs {
+                flex-wrap: wrap;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .app-header,
+            .form-actions,
+            .results-actions,
+            .history-controls,
+            .help-section {
+                display: none;
+            }
+
+            .section-container {
+                box-shadow: none;
+                border: 1px solid #ccc;
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <h1 class="app-title">
+                <span class="title-icon">🎯</span>
+                第四阶段实战技法八字分析系统
+            </h1>
+            <div class="subtitle">
+                基于《探索门八字取象秘法》等五本经典著作的综合实战技法分析
+            </div>
+            <div class="feature-badges">
+                <span class="badge">取象分析</span>
+                <span class="badge">妻财专项</span>
+                <span class="badge">流年实务</span>
+                <span class="badge">案例验证</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <!-- 输入区域 -->
+        <section class="input-section">
+            <div class="section-container">
+                <h2 class="section-title">
+                    <span class="icon">📝</span>
+                    基本信息输入
+                </h2>
+
+                <form id="bazi-form" class="bazi-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">姓名：</label>
+                            <input type="text" id="name" placeholder="请输入姓名" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="gender">性别：</label>
+                            <select id="gender" required>
+                                <option value="男">男</option>
+                                <option value="女">女</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="birth-date">出生日期：</label>
+                            <input type="date" id="birth-date" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="birth-time">出生时间：</label>
+                            <input type="time" id="birth-time" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row optional-inputs">
+                        <div class="form-group">
+                            <label for="liu-nian">流年（可选）：</label>
+                            <input type="text" id="liu-nian" placeholder="如：甲辰 2024">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="focus">分析重点（可选）：</label>
+                            <select id="focus">
+                                <option value="综合">综合分析</option>
+                                <option value="取象">取象分析</option>
+                                <option value="妻财">妻财分析</option>
+                                <option value="流年">流年分析</option>
+                                <option value="事业">事业发展</option>
+                                <option value="婚姻">婚姻感情</option>
+                                <option value="健康">健康养生</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="analyze-btn primary-btn">
+                            <span class="btn-icon">🔮</span>
+                            开始实战技法分析
+                        </button>
+                        <button type="button" class="demo-btn secondary-btn" id="demo-btn">
+                            <span class="btn-icon">🎲</span>
+                            加载演示案例
+                        </button>
+                        <button type="button" class="clear-btn secondary-btn" id="clear-btn">
+                            <span class="btn-icon">🔄</span>
+                            清空重置
+                        </button>
+                    </div>
+                </form>
+
+                <!-- 分析方法选择 -->
+                <div class="method-selection">
+                    <h3>实战技法分析方法</h3>
+                    <div class="method-options">
+                        <label class="method-option">
+                            <input type="checkbox" name="methods" value="xiangfa" checked>
+                            <span class="method-name">探索门取象法</span>
+                            <span class="method-desc">王庆著，精准取象分析</span>
+                        </label>
+                        <label class="method-option">
+                            <input type="checkbox" name="methods" value="jinglun" checked>
+                            <span class="method-name">命理精论</span>
+                            <span class="method-desc">胡一鸣著，哲学思想分析</span>
+                        </label>
+                        <label class="method-option">
+                            <input type="checkbox" name="methods" value="qicai" checked>
+                            <span class="method-name">点算八字妻财</span>
+                            <span class="method-desc">罗量著，妻财专项分析</span>
+                        </label>
+                        <label class="method-option">
+                            <input type="checkbox" name="methods" value="liunian" checked>
+                            <span class="method-name">流年实务</span>
+                            <span class="method-desc">潘东光著，流年预测实务</span>
+                        </label>
+                        <label class="method-option">
+                            <input type="checkbox" name="methods" value="anli" checked>
+                            <span class="method-name">案例验证</span>
+                            <span class="method-desc">李月木著，案例对比验证</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 分析过程区域 -->
+        <section class="analysis-section">
+            <div class="section-container">
+                <h2 class="section-title">
+                    <span class="icon">⚡</span>
+                    实战技法分析过程
+                </h2>
+
+                <div class="analysis-progress" id="analysis-progress" style="display: none;">
+                    <div class="progress-header">
+                        <h3>正在进行实战技法分析...</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                        <div class="progress-text" id="progress-text">准备中...</div>
+                    </div>
+
+                    <div class="analysis-steps">
+                        <div class="step" id="step-paipan">
+                            <span class="step-icon">📊</span>
+                            <span class="step-text">八字排盘</span>
+                            <span class="step-status">pending</span>
+                        </div>
+                        <div class="step" id="step-xiangfa">
+                            <span class="step-icon">🎨</span>
+                            <span class="step-text">探索门取象分析</span>
+                            <span class="step-status">pending</span>
+                        </div>
+                        <div class="step" id="step-jinglun">
+                            <span class="step-icon">📚</span>
+                            <span class="step-text">命理精论分析</span>
+                            <span class="step-status">pending</span>
+                        </div>
+                        <div class="step" id="step-qicai">
+                            <span class="step-icon">💰</span>
+                            <span class="step-text">妻财专项分析</span>
+                            <span class="step-status">pending</span>
+                        </div>
+                        <div class="step" id="step-liunian">
+                            <span class="step-icon">📅</span>
+                            <span class="step-text">流年实务分析</span>
+                            <span class="step-status">pending</span>
+                        </div>
+                        <div class="step" id="step-anli">
+                            <span class="step-icon">🔍</span>
+                            <span class="step-text">案例验证</span>
+                            <span class="step-status">pending</span>
+                        </div>
+                        <div class="step" id="step-zonghe">
+                            <span class="step-icon">🎯</span>
+                            <span class="step-text">综合建议</span>
+                            <span class="step-status">pending</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 结果展示区域 -->
+        <section class="results-section">
+            <div class="section-container">
+                <h2 class="section-title">
+                    <span class="icon">📋</span>
+                    实战技法分析结果
+                </h2>
+
+                <div class="results-container" id="results-container">
+                    <div class="placeholder">
+                        <div class="placeholder-icon">📝</div>
+                        <p>请输入基本信息并点击"开始实战技法分析"按钮</p>
+                    </div>
+                </div>
+
+                <!-- 结果操作按钮 -->
+                <div class="results-actions" id="results-actions" style="display: none;">
+                    <button class="export-btn" id="export-btn">
+                        <span class="btn-icon">💾</span>
+                        导出分析报告
+                    </button>
+                    <button class="print-btn" id="print-btn">
+                        <span class="btn-icon">🖨️</span>
+                        打印报告
+                    </button>
+                    <button class="share-btn" id="share-btn">
+                        <span class="btn-icon">🔗</span>
+                        分享结果
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 历史记录区域 -->
+        <section class="history-section">
+            <div class="section-container">
+                <h2 class="section-title">
+                    <span class="icon">📚</span>
+                    分析历史记录
+                </h2>
+
+                <div class="history-controls">
+                    <button class="clear-history-btn" id="clear-history-btn">
+                        <span class="btn-icon">🗑️</span>
+                        清空历史
+                    </button>
+                    <button class="export-history-btn" id="export-history-btn">
+                        <span class="btn-icon">📤</span>
+                        导出历史
+                    </button>
+                </div>
+
+                <div class="history-list" id="history-list">
+                    <div class="placeholder">
+                        <p>暂无分析历史</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 帮助区域 -->
+        <section class="help-section">
+            <div class="section-container">
+                <h2 class="section-title">
+                    <span class="icon">❓</span>
+                    实战技法使用指南
+                </h2>
+
+                <div class="help-content">
+                    <div class="help-tabs">
+                        <button class="tab-btn active" data-tab="overview">系统概述</button>
+                        <button class="tab-btn" data-tab="methods">方法介绍</button>
+                        <button class="tab-btn" data-tab="usage">使用说明</button>
+                        <button class="tab-btn" data-tab="cases">案例展示</button>
+                    </div>
+
+                    <div class="help-panels">
+                        <div class="help-panel active" id="panel-overview">
+                            <h3>第四阶段实战技法系统概述</h3>
+                            <p>本系统基于五本经典实战技法著作，提供专业的八字分析服务：</p>
+                            <ul>
+                                <li><strong>探索门取象法</strong> - 王庆著，精准的意象解读技法</li>
+                                <li><strong>命理精论</strong> - 胡一鸣著，深刻的命理哲学思想</li>
+                                <li><strong>点算八字妻财</strong> - 罗量著，专项的妻财子禄分析</li>
+                                <li><strong>八字批流年实务</strong> - 潘东光著，实用的流年预测方法</li>
+                                <li><strong>命理精解二百例</strong> - 李月木著，丰富的案例验证系统</li>
+                            </ul>
+                        </div>
+
+                        <div class="help-panel" id="panel-methods">
+                            <h3>实战技法方法介绍</h3>
+                            <div class="method-descriptions">
+                                <div class="method-desc">
+                                    <h4>🎨 探索门取象法</h4>
+                                    <p>通过天干地支、十神、宫位等进行精准取象，揭示命局的深层含义。</p>
+                                </div>
+                                <div class="method-desc">
+                                    <h4>📚 命理精论</h4>
+                                    <p>运用哲学思维分析命理，提供天人合一、阴阳平衡的深刻见解。</p>
+                                </div>
+                                <div class="method-desc">
+                                    <h4>💰 点算八字妻财</h4>
+                                    <p>专门分析妻财子禄等人生重要方面，提供详细的预测和建议。</p>
+                                </div>
+                                <div class="method-desc">
+                                    <h4>📅 流年实务</h4>
+                                    <p>分析流年对命局的影响，预测年度运势和重要时机。</p>
+                                </div>
+                                <div class="method-desc">
+                                    <h4>🔍 案例验证</h4>
+                                    <p>通过大量经典案例验证分析结果，提高预测准确性。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="help-panel" id="panel-usage">
+                            <h3>使用说明</h3>
+                            <ol>
+                                <li>输入姓名、性别、出生日期和时间</li>
+                                <li>可选择输入流年进行流年分析</li>
+                                <li>选择分析重点和实战技法方法</li>
+                                <li>点击"开始实战技法分析"按钮</li>
+                                <li>查看详细的分析结果和建议</li>
+                                <li>可导出报告或保存到历史记录</li>
+                            </ol>
+                        </div>
+
+                        <div class="help-panel" id="panel-cases">
+                            <h3>案例展示</h3>
+                            <div class="case-showcases">
+                                <div class="showcase">
+                                    <h4>事业成功案例</h4>
+                                    <p>八字：甲戌 丙寅 甲子 丙寅</p>
+                                    <p>通过探索门取象法和命理精论分析，识别出财官印全的格局，提供了事业发展建议。</p>
+                                </div>
+                                <div class="showcase">
+                                    <h4>婚姻美满案例</h4>
+                                    <p>八字：丙戌 庚寅 癸卯 壬午</p>
+                                    <p>通过妻财专项分析和案例验证，分析婚姻状况，提供了感情经营建议。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 引入JavaScript -->
+    <script src="bazi-practical-techniques-app.js"></script>
+    <script>
+        // 模拟第四阶段实战技法系统
+        const stage04System = {
+            // 综合分析主函数
+            comprehensiveAnalysis: function(bazi, options = {}) {
+                const analysis = {
+                    基本信息: {
+                        姓名: options.name || '未提供',
+                        性别: options.gender || '男',
+                        出生日期: options.birthDateTime || '未提供',
+                        八字: this.formatBazi(bazi)
+                    },
+
+                    // 探索门取象分析
+                    取象分析: this.performXiangAnalysis(bazi),
+
+                    // 命理精论分析
+                    精论分析: this.performJinglunAnalysis(bazi),
+
+                    // 妻财专项分析
+                    妻财分析: this.performQicaiAnalysis(bazi, options.gender),
+
+                    // 流年实务分析（如果提供流年）
+                    流年分析: options.liuNian ? this.performLiunianAnalysis(bazi, options.liuNian) : {},
+
+                    // 案例验证
+                    案例验证: this.performCaseValidation(bazi),
+
+                    // 综合建议
+                    综合建议: this.generateComprehensiveAdvice(bazi, options)
+                };
+
+                return analysis;
+            },
+
+            // 取象法分析
+            performXiangAnalysis: function(bazi) {
+                const analysis = {
+                    十神取象: {},
+                    干支取象: {},
+                    宫位取象: {},
+                    组合取象: [],
+                    综合意象: []
+                };
+
+                // 十神取象分析
+                ['year', 'month', 'day', 'hour'].forEach(pillar => {
+                    const tianGan = bazi[pillar].天干;
+                    const diZhi = bazi[pillar].地支;
+                    const shiShen = bazi[pillar].十神;
+
+                    analysis.十神取象[pillar] = this.getShiShenXiang(shiShen);
+                    analysis.干支取象[pillar] = {
+                        天干: this.getTianGanXiang(tianGan),
+                        地支: this.getDiZhiXiang(diZhi)
+                    };
+                });
+
+                // 宫位取象
+                analysis.宫位取象 = {
+                    年柱: "祖上、父母、1-16岁、远方、天命、根本",
+                    月柱: "父母、兄弟、17-32岁、事业、领导、社会",
+                    日柱: "自己、配偶、33-48岁、婚姻、家庭、内在",
+                    时柱: "子女、下属、49岁后、成就、晚年、归宿"
+                };
+
+                // 生成综合意象
+                analysis.综合意象 = this.generateComprehensiveImages(analysis);
+
+                return analysis;
+            },
+
+            // 精论法分析
+            performJinglunAnalysis: function(bazi) {
+                return {
+                    哲学思想: {
+                        天人合一: "命局反映宇宙信息，顺应自然规律",
+                        阴阳平衡: "追求命局五行平衡，和谐发展",
+                        系统思维: "八字为完整系统，各部分相互影响",
+                        辩证思维: "吉凶相对，可以相互转化"
+                    },
+                    病药分析: {
+                        命局之病: ["身弱"],
+                        对症之药: ["印比"],
+                        治疗方案: ["加强自身力量"]
+                    },
+                    调候分析: {
+                        月令: bazi.month.地支,
+                        调候用神: "火",
+                        调候原理: "根据月令气候特点选择用神",
+                        调候效果: "平衡命局寒暖燥湿"
+                    },
+                    格局分析: {
+                        主要格局: "正格",
+                        格局质量: "中等",
+                        成格条件: "基本满足"
+                    }
+                };
+            },
+
+            // 妻财专项分析
+            performQicaiAnalysis: function(bazi, gender) {
+                return {
+                    妻星分析: this.analyzeQiXing(bazi, gender),
+                    财星分析: this.analyzeCaiXing(bazi),
+                    子女分析: this.analyzeZiNv(bazi, gender)
+                };
+            },
+
+            // 流年实务分析
+            performLiunianAnalysis: function(bazi, liuNian) {
+                return {
+                    流年总评: {
+                        流年: liuNian,
+                        总体评价: "中等",
+                        注意事项: ["谨慎投资", "注意健康"]
+                    },
+                    流年取象: {
+                        天干之象: "发展机遇",
+                        地支之象: "变化调整"
+                    },
+                    应期判断: {
+                        应期: "年中",
+                        事件: "事业变动"
+                    },
+                    趋避建议: {
+                        宜: "积极进取",
+                        忌: "冒险投资"
+                    }
+                };
+            },
+
+            // 案例验证
+            performCaseValidation: function(bazi) {
+                return {
+                    相似案例: [
+                        {
+                            姓名: "某企业家",
+                            八字: "甲戌 丙寅 甲子 丙寅",
+                            相似度: "85%"
+                        },
+                        {
+                            姓名: "某职场人士",
+                            八字: "乙卯 乙酉 乙丑 丁巳",
+                            相似度: "75%"
+                        }
+                    ],
+                    符合度: "80%",
+                    验证建议: "建议继续观察和验证"
+                };
+            },
+
+            // 生成综合建议
+            generateComprehensiveAdvice: function(bazi, options) {
+                return {
+                    人生规划: "稳扎稳打，循序渐进，把握发展机遇",
+                    事业发展: "适合技术或管理岗位，发挥个人优势",
+                    婚姻感情: "感情需要经营，重视家庭和谐",
+                    财富管理: "稳健理财，避免冒险，注重积累",
+                    健康养生: "注意作息规律，保持身心健康",
+                    开运建议: "东南方向有利，可调整居住环境"
+                };
+            },
+
+            // 辅助方法
+            formatBazi: function(bazi) {
+                return {
+                    年柱: `${bazi.year.天干}${bazi.year.地支}`,
+                    月柱: `${bazi.month.天干}${bazi.month.地支}`,
+                    日柱: `${bazi.day.天干}${bazi.day.地支}`,
+                    时柱: `${bazi.hour.天干}${bazi.hour.地支}`
+                };
+            },
+
+            getShiShenXiang: function(shiShen) {
+                const shiShenMap = {
+                    '正官': ['官职', '地位', '约束', '规律', '丈夫', '女儿'],
+                    '七杀': ['权力', '威严', '小人', '敌人', '儿子', '压力'],
+                    '正财': ['妻子', '父亲', '财产', '富裕', '勤俭', '现实'],
+                    '偏财': ['妾', '父亲', '横财', '投机', '交际', '奢侈'],
+                    '正印': ['母亲', '学习', '文书', '房子', '保护', '依靠'],
+                    '偏印': ['继母', '非主流', '玄学', '医药', '孤独', '精明'],
+                    '比肩': ['兄弟', '朋友', '同事', '竞争', '自信', '自尊'],
+                    '劫财': ['姐妹', '争夺', '欺骗', '投机', '手脚', '义气'],
+                    '食神': ['女儿', '快乐', '艺术', '口福', '慢性病', '温和'],
+                    '伤官': ['智慧', '才艺', '叛逆', '口舌', '子女', '急性病']
+                };
+                return shiShenMap[shiShen] || [];
+            },
+
+            getTianGanXiang: function(tianGan) {
+                const tianGanMap = {
+                    '甲': ['栋梁', '树木', '领导', '开始', '头部', '胆', '正直'],
+                    '乙': ['花草', '藤蔓', '柔韧', '艺术', '颈部', '肝', '温和'],
+                    '丙': ['太阳', '光明', '热情', '权力', '眼睛', '心脏', '急躁'],
+                    '丁': ['烛光', '文明', '礼貌', '神秘', '心脏', '血液', '温暖'],
+                    '戊': ['高山', '土地', '诚信', '稳重', '胃', '脾', '忠厚'],
+                    '己': ['田园', '土壤', '包容', '含蓄', '脾', '胰腺', '细致'],
+                    '庚': ['斧头', '金属', '刚强', '变革', '大肠', '肺', '义气'],
+                    '辛': ['珠宝', '首饰', '精致', '美容', '肺', '呼吸道', '细腻'],
+                    '壬': ['江河', '智慧', '变通', '流动', '膀胱', '肾', '聪明'],
+                    '癸': ['雨露', '滋润', '包容', '耐心', '肾', '泌尿', '温柔']
+                };
+                return tianGanMap[tianGan] || [];
+            },
+
+            getDiZhiXiang: function(diZhi) {
+                const diZhiMap = {
+                    '子': ['水', '聪明', '盗贼', '妇女', '肾', '耳', '诡秘'],
+                    '丑': ['土', '寒冰', '仓库', '田园', '脾', '胃', '稳定'],
+                    '寅': ['木', '老虎', '官员', '胆', '四肢', '仁义'],
+                    '卯': ['木', '兔子', '门窗', '肝', '指', '温和'],
+                    '辰': ['土', '龙', '水库', '胃', '肩', '变化'],
+                    '巳': ['火', '蛇', '文书', '心', '喉', '文明'],
+                    '午': ['火', '马', '文明', '心脏', '舌', '热情'],
+                    '未': ['土', '羊', '田园', '脾', '腹', '温和'],
+                    '申': ['金', '猴子', '法律', '大肠', '骨', '义气'],
+                    '酉': ['金', '鸡', '首饰', '肺', '肋', '精致'],
+                    '戌': ['土', '狗', '寺庙', '胃', '腿', '忠诚'],
+                    '亥': ['水', '猪', '湖泊', '肾', '头', '智慧']
+                };
+                return diZhiMap[diZhi] || [];
+            },
+
+            generateComprehensiveImages: function(xiangAnalysis) {
+                const images = [];
+
+                // 从十神取象生成意象
+                Object.values(xiangAnalysis.十神取象).forEach(shiShenXiang => {
+                    if (Array.isArray(shiShenXiang)) {
+                        images.push(...shiShenXiang);
+                    }
+                });
+
+                // 从干支取象生成意象
+                Object.values(xiangAnalysis.干支取象).forEach(ganZhiXiang => {
+                    if (ganZhiXiang.天干) images.push(...ganZhiXiang.天干);
+                    if (ganZhiXiang.地支) images.push(...ganZhiXiang.地支);
+                });
+
+                return [...new Set(images)]; // 去重
+            },
+
+            analyzeQiXing: function(bazi, gender) {
+                if (gender === '男') {
+                    return {
+                        妻星: "正财存在",
+                        妻宫: bazi.day.地支,
+                        婚姻状况: "需要综合分析"
+                    };
+                } else {
+                    return {
+                        夫星: "正官存在",
+                        夫宫: bazi.day.地支,
+                        婚姻状况: "需要综合分析"
+                    };
+                }
+            },
+
+            analyzeCaiXing: function(bazi) {
+                return {
+                    正财: "正财存在",
+                    偏财: "偏财存在",
+                    财运: "中等偏上"
+                };
+            },
+
+            analyzeZiNv: function(bazi, gender) {
+                if (gender === '男') {
+                    return {
+                        子星: "七杀存在",
+                        子女: "一般"
+                    };
+                } else {
+                    return {
+                        子星: "食神存在",
+                        子女: "一般"
+                    };
+                }
+            }
+        };
+
+        // 简化版应用类
+        class SimpleBaziApp {
+            constructor() {
+                this.currentAnalysis = null;
+                this.analysisHistory = [];
+                this.isAnalyzing = false;
+                this.bindEvents();
+                this.loadSavedData();
+            }
+
+            bindEvents() {
+                // 表单提交
+                const form = document.getElementById('bazi-form');
+                if (form) {
+                    form.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.startAnalysis();
+                    });
+                }
+
+                // 演示按钮
+                const demoBtn = document.getElementById('demo-btn');
+                if (demoBtn) {
+                    demoBtn.addEventListener('click', () => {
+                        this.loadDemoData();
+                    });
+                }
+
+                // 清空按钮
+                const clearBtn = document.getElementById('clear-btn');
+                if (clearBtn) {
+                    clearBtn.addEventListener('click', () => {
+                        this.clearForm();
+                    });
+                }
+
+                // 结果操作按钮
+                this.bindResultActions();
+
+                // 历史记录按钮
+                this.bindHistoryActions();
+
+                // 帮助标签页
+                this.bindHelpTabs();
+            }
+
+            async startAnalysis() {
+                if (this.isAnalyzing) {
+                    this.showMessage('正在分析中，请稍候...', 'warning');
+                    return;
+                }
+
+                const formData = this.collectFormData();
+                if (!formData) {
+                    this.showMessage('请填写完整的基本信息', 'error');
+                    return;
+                }
+
+                this.isAnalyzing = true;
+                this.showAnalysisProgress();
+
+                try {
+                    // 模拟分析步骤
+                    await this.updateStep('step-paipan', '正在进行八字排盘...');
+                    await this.delay(500);
+
+                    await this.updateStep('step-xiangfa', '进行探索门取象分析...');
+                    await this.delay(800);
+
+                    await this.updateStep('step-jinglun', '进行命理精论分析...');
+                    await this.delay(800);
+
+                    await this.updateStep('step-qicai', '进行妻财专项分析...');
+                    await this.delay(800);
+
+                    if (formData.liuNian) {
+                        await this.updateStep('step-liunian', '进行流年实务分析...');
+                        await this.delay(800);
+                    }
+
+                    await this.updateStep('step-anli', '进行案例验证...');
+                    await this.delay(800);
+
+                    await this.updateStep('step-zonghe', '生成综合建议...');
+                    await this.delay(500);
+
+                    // 生成模拟八字
+                    const bazi = this.generateMockBazi(formData);
+
+                    // 进行分析
+                    const analysis = stage04System.comprehensiveAnalysis(bazi, formData);
+                    this.currentAnalysis = {
+                        ...analysis,
+                        timestamp: new Date().toISOString(),
+                        formData: formData
+                    };
+
+                    this.hideAnalysisProgress();
+                    this.displayResults(analysis);
+                    this.addToHistory(this.currentAnalysis);
+
+                    this.showMessage('实战技法分析完成！', 'success');
+
+                } catch (error) {
+                    console.error('分析过程出错:', error);
+                    this.showMessage('分析过程出错，请重试', 'error');
+                    this.hideAnalysisProgress();
+                } finally {
+                    this.isAnalyzing = false;
+                }
+            }
+
+            collectFormData() {
+                const name = document.getElementById('name')?.value?.trim();
+                const gender = document.getElementById('gender')?.value;
+                const birthDate = document.getElementById('birth-date')?.value;
+                const birthTime = document.getElementById('birth-time')?.value;
+                const liuNian = document.getElementById('liu-nian')?.value?.trim();
+                const focus = document.getElementById('focus')?.value;
+
+                if (!name || !gender || !birthDate || !birthTime) {
+                    return null;
+                }
+
+                return {
+                    name,
+                    gender,
+                    birthDateTime: `${birthDate} ${birthTime}`,
+                    liuNian: liuNian || undefined,
+                    focus,
+                    methods: this.getSelectedMethods()
+                };
+            }
+
+            getSelectedMethods() {
+                const checkboxes = document.querySelectorAll('input[name="methods"]:checked');
+                return Array.from(checkboxes).map(cb => cb.value);
+            }
+
+            generateMockBazi(formData) {
+                // 简化的八字生成逻辑
+                const tianGan = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
+                const diZhi = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+                const shiShen = ['正官', '七杀', '正财', '偏财', '正印', '偏印', '比肩', '劫财', '食神', '伤官'];
+
+                const getRandomElement = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+                return {
+                    year: { 天干: getRandomElement(tianGan), 地支: getRandomElement(diZhi), 十神: getRandomElement(shiShen) },
+                    month: { 天干: getRandomElement(tianGan), 地支: getRandomElement(diZhi), 十神: getRandomElement(shiShen) },
+                    day: { 天干: getRandomElement(tianGan), 地支: getRandomElement(diZhi), 十神: '日主' },
+                    hour: { 天干: getRandomElement(tianGan), 地支: getRandomElement(diZhi), 十神: getRandomElement(shiShen) }
+                };
+            }
+
+            showAnalysisProgress() {
+                const progressSection = document.getElementById('analysis-progress');
+                if (progressSection) {
+                    progressSection.style.display = 'block';
+                }
+                this.resetAllSteps();
+                this.updateProgress(0);
+            }
+
+            hideAnalysisProgress() {
+                const progressSection = document.getElementById('analysis-progress');
+                if (progressSection) {
+                    progressSection.style.display = 'none';
+                }
+            }
+
+            async updateStep(stepId, text) {
+                const step = document.getElementById(stepId);
+                const statusElement = step?.querySelector('.step-status');
+                const progressText = document.getElementById('progress-text');
+
+                if (statusElement) {
+                    statusElement.textContent = 'processing';
+                    statusElement.className = 'step-status processing';
+                }
+
+                if (progressText) {
+                    progressText.textContent = text;
+                }
+
+                // 更新进度条
+                const steps = ['step-paipan', 'step-xiangfa', 'step-jinglun', 'step-qicai', 'step-liunian', 'step-anli', 'step-zonghe'];
+                const currentIndex = steps.indexOf(stepId);
+                if (currentIndex !== -1) {
+                    this.updateProgress((currentIndex + 1) / steps.length * 100);
+                }
+
+                await this.delay(300);
+
+                if (statusElement) {
+                    statusElement.textContent = 'completed';
+                    statusElement.className = 'step-status completed';
+                }
+            }
+
+            resetAllSteps() {
+                const steps = document.querySelectorAll('.step');
+                steps.forEach(step => {
+                    const status = step.querySelector('.step-status');
+                    if (status) {
+                        status.textContent = 'pending';
+                        status.className = 'step-status pending';
+                    }
+                });
+            }
+
+            updateProgress(percentage) {
+                const progressFill = document.getElementById('progress-fill');
+                if (progressFill) {
+                    progressFill.style.width = `${percentage}%`;
+                }
+            }
+
+            displayResults(analysis) {
+                const resultsContainer = document.getElementById('results-container');
+                const resultsActions = document.getElementById('results-actions');
+
+                if (!resultsContainer) return;
+
+                resultsContainer.innerHTML = this.generateResultsHTML(analysis);
+                resultsActions.style.display = 'block';
+
+                // 绑定结果页面的交互事件
+                this.bindResultsInteractions();
+            }
+
+            generateResultsHTML(analysis) {
+                return `
+                    <div class="analysis-results">
+                        <!-- 基本信息 -->
+                        <div class="result-section">
+                            <h3 class="result-title">📋 基本信息</h3>
+                            <div class="result-content">
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <span class="label">姓名：</span>
+                                        <span class="value">${analysis.基本信息.姓名}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="label">性别：</span>
+                                        <span class="value">${analysis.基本信息.性别}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="label">出生日期：</span>
+                                        <span class="value">${analysis.基本信息.出生日期}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="label">八字：</span>
+                                        <span class="value bazi-display">
+                                            ${analysis.基本信息.八字.年柱}
+                                            ${analysis.基本信息.八字.月柱}
+                                            ${analysis.基本信息.八字.日柱}
+                                            ${analysis.基本信息.八字.时柱}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 取象分析 -->
+                        <div class="result-section">
+                            <h3 class="result-title">🎨 探索门取象分析</h3>
+                            <div class="result-content">
+                                <div class="xiang-analysis">
+                                    <div class="xiang-category">
+                                        <h4>十神取象</h4>
+                                        <div class="xiang-items">
+                                            ${Object.entries(analysis.取象分析.十神取象).map(([pillar, xiang]) => `
+                                                <div class="xiang-item">
+                                                    <span class="pillar-name">${this.getPillarName(pillar)}：</span>
+                                                    <span class="xiang-content">${Array.isArray(xiang) ? xiang.join('、') : xiang}</span>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+
+                                    <div class="xiang-category">
+                                        <h4>综合意象</h4>
+                                        <div class="xiang-images">
+                                            ${analysis.取象分析.综合意象.map(image => `
+                                                <span class="image-tag">${image}</span>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 命理精论分析 -->
+                        <div class="result-section">
+                            <h3 class="result-title">📚 命理精论分析</h3>
+                            <div class="result-content">
+                                <div class="jinglun-analysis">
+                                    <div class="analysis-item">
+                                        <h4>哲学思想</h4>
+                                        <div class="philosophy-items">
+                                            ${Object.entries(analysis.精论分析.哲学思想).map(([key, value]) => `
+                                                <div class="philosophy-item">
+                                                    <span class="concept">${key}：</span>
+                                                    <span class="explanation">${value}</span>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+
+                                    <div class="analysis-item">
+                                        <h4>病药分析</h4>
+                                        <div class="bingyao-result">
+                                            <div class="bing">
+                                                <strong>命局之病：</strong>
+                                                ${analysis.精论分析.病药分析.命局之病.join('、') || '无明显病症'}
+                                            </div>
+                                            <div class="yao">
+                                                <strong>对症之药：</strong>
+                                                ${analysis.精论分析.病药分析.对症之药.join('、') || '无需用药'}
+                                            </div>
+                                            <div class="plan">
+                                                <strong>治疗方案：</strong>
+                                                ${analysis.精论分析.病药分析.治疗方案.join('、') || '保持现状'}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 妻财分析 -->
+                        <div class="result-section">
+                            <h3 class="result-title">💰 妻财专项分析</h3>
+                            <div class="result-content">
+                                <div class="qicai-analysis">
+                                    <div class="qicai-item">
+                                        <h4>妻星/夫星分析</h4>
+                                        <div class="qixing-result">
+                                            ${Object.entries(analysis.妻财分析.妻星分析).map(([key, value]) => `
+                                                <div class="qixing-detail">
+                                                    <span class="detail-label">${key}：</span>
+                                                    <span class="detail-value">${value}</span>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+
+                                    <div class="qicai-item">
+                                        <h4>财星分析</h4>
+                                        <div class="caixing-result">
+                                            ${Object.entries(analysis.妻财分析.财星分析).map(([key, value]) => `
+                                                <div class="caixing-detail">
+                                                    <span class="detail-label">${key}：</span>
+                                                    <span class="detail-value">${value}</span>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 流年分析（如果有） -->
+                        ${Object.keys(analysis.流年分析).length > 0 ? `
+                            <div class="result-section">
+                                <h3 class="result-title">📅 流年实务分析</h3>
+                                <div class="result-content">
+                                    <div class="liunian-analysis">
+                                        ${Object.entries(analysis.流年分析).map(([key, value]) => `
+                                            <div class="liunian-item">
+                                                <h4>${this.getLiunianItemName(key)}</h4>
+                                                <div class="liunian-content">
+                                                    ${typeof value === 'object' ? JSON.stringify(value, null, 2) : value}
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        <!-- 案例验证 -->
+                        <div class="result-section">
+                            <h3 class="result-title">🔍 案例验证</h3>
+                            <div class="result-content">
+                                <div class="case-validation">
+                                    <div class="validation-metrics">
+                                        <div class="metric">
+                                            <span class="metric-label">相似案例：</span>
+                                            <span class="metric-value">${analysis.案例验证.相似案例.length} 个</span>
+                                        </div>
+                                        <div class="metric">
+                                            <span class="metric-label">符合度：</span>
+                                            <span class="metric-value">${analysis.案例验证.符合度}</span>
+                                        </div>
+                                    </div>
+                                    <div class="validation-advice">
+                                        <strong>验证建议：</strong>${analysis.案例验证.验证建议}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 综合建议 -->
+                        <div class="result-section">
+                            <h3 class="result-title">🎯 综合建议</h3>
+                            <div class="result-content">
+                                <div class="comprehensive-advice">
+                                    ${Object.entries(analysis.综合建议).map(([key, value]) => `
+                                        <div class="advice-item">
+                                            <h4 class="advice-title">${this.getAdviceIcon(key)} ${this.getAdviceName(key)}</h4>
+                                            <p class="advice-content">${value}</p>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            getPillarName(pillar) {
+                const names = {
+                    year: '年柱',
+                    month: '月柱',
+                    day: '日柱',
+                    hour: '时柱'
+                };
+                return names[pillar] || pillar;
+            }
+
+            getLiunianItemName(key) {
+                const names = {
+                    流年总评: '流年总体评价',
+                    流年取象: '流年取象分析',
+                    应期判断: '应期判断结果',
+                    趋避建议: '趋避建议指导'
+                };
+                return names[key] || key;
+            }
+
+            getAdviceIcon(key) {
+                const icons = {
+                    人生规划: '🗺️',
+                    事业发展: '💼',
+                    婚姻感情: '💕',
+                    财富管理: '💰',
+                    健康养生: '🏃',
+                    开运建议: '✨'
+                };
+                return icons[key] || '📋';
+            }
+
+            getAdviceName(key) {
+                return key;
+            }
+
+            bindResultActions() {
+                const exportBtn = document.getElementById('export-btn');
+                const printBtn = document.getElementById('print-btn');
+                const shareBtn = document.getElementById('share-btn');
+
+                if (exportBtn) {
+                    exportBtn.addEventListener('click', () => {
+                        this.exportResults();
+                    });
+                }
+
+                if (printBtn) {
+                    printBtn.addEventListener('click', () => {
+                        this.printResults();
+                    });
+                }
+
+                if (shareBtn) {
+                    shareBtn.addEventListener('click', () => {
+                        this.shareResults();
+                    });
+                }
+            }
+
+            exportResults() {
+                if (!this.currentAnalysis) {
+                    this.showMessage('没有可导出的分析结果', 'warning');
+                    return;
+                }
+
+                const content = this.generateReportContent();
+                const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `八字实战技法分析报告_${this.currentAnalysis.基本信息.姓名}_${new Date().toLocaleDateString()}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                this.showMessage('分析报告已导出', 'success');
+            }
+
+            generateReportContent() {
+                const analysis = this.currentAnalysis;
+                return `
+=======================================
+第四阶段实战技法八字分析报告
+=======================================
+
+基本信息：
+姓名：${analysis.基本信息.姓名}
+性别：${analysis.基本信息.性别}
+出生日期：${analysis.基本信息.出生日期}
+八字：${analysis.基本信息.八字.年柱} ${analysis.基本信息.八字.月柱} ${analysis.基本信息.八字.日柱} ${analysis.基本信息.八字.时柱}
+
+=======================================
+探索门取象分析
+=======================================
+综合意象：${analysis.取象分析.综合意象.join('、')}
+
+=======================================
+命理精论分析
+=======================================
+哲学思想：
+${Object.entries(analysis.精论分析.哲学思想).map(([key, value]) => `${key}：${value}`).join('\n')}
+
+病药分析：
+命局之病：${analysis.精论分析.病药分析.命局之病.join('、')}
+对症之药：${analysis.精论分析.病药分析.对症之药.join('、')}
+治疗方案：${analysis.精论分析.病药分析.治疗方案.join('、')}
+
+=======================================
+妻财专项分析
+=======================================
+${Object.entries(analysis.妻财分析.妻星分析).map(([key, value]) => `${key}：${value}`).join('\n')}
+${Object.entries(analysis.妻财分析.财星分析).map(([key, value]) => `${key}：${value}`).join('\n')}
+
+=======================================
+综合建议
+=======================================
+${Object.entries(analysis.综合建议).map(([key, value]) => `${key}：${value}`).join('\n')}
+
+=======================================
+分析时间：${new Date().toLocaleString()}
+=======================================
+                `;
+            }
+
+            printResults() {
+                if (!this.currentAnalysis) {
+                    this.showMessage('没有可打印的分析结果', 'warning');
+                    return;
+                }
+
+                window.print();
+                this.showMessage('打印窗口已打开', 'success');
+            }
+
+            shareResults() {
+                if (!this.currentAnalysis) {
+                    this.showMessage('没有可分享的分析结果', 'warning');
+                    return;
+                }
+
+                const shareText = `第四阶段实战技法八字分析结果：\n姓名：${this.currentAnalysis.基本信息.姓名}\n综合建议：${this.currentAnalysis.综合建议.人生规划}`;
+
+                if (navigator.share) {
+                    navigator.share({
+                        title: '八字实战技法分析结果',
+                        text: shareText
+                    }).catch(err => {
+                        console.log('分享失败:', err);
+                        this.copyToClipboard(shareText);
+                    });
+                } else {
+                    this.copyToClipboard(shareText);
+                }
+            }
+
+            copyToClipboard(text) {
+                navigator.clipboard.writeText(text).then(() => {
+                    this.showMessage('分析结果已复制到剪贴板', 'success');
+                }).catch(() => {
+                    this.showMessage('复制失败，请手动复制', 'error');
+                });
+            }
+
+            addToHistory(analysis) {
+                this.analysisHistory.unshift(analysis);
+
+                // 限制历史记录数量
+                if (this.analysisHistory.length > 20) {
+                    this.analysisHistory = this.analysisHistory.slice(0, 20);
+                }
+
+                this.saveToLocalStorage();
+                this.updateHistoryDisplay();
+            }
+
+            updateHistoryDisplay() {
+                const historyList = document.getElementById('history-list');
+                if (!historyList) return;
+
+                if (this.analysisHistory.length === 0) {
+                    historyList.innerHTML = '<div class="placeholder"><p>暂无分析历史</p></div>';
+                    return;
+                }
+
+                historyList.innerHTML = this.analysisHistory.map((analysis, index) => `
+                    <div class="history-item" data-index="${index}">
+                        <div class="history-header">
+                            <span class="history-name">${analysis.基本信息.姓名}</span>
+                            <span class="history-date">${new Date(analysis.timestamp).toLocaleString()}</span>
+                        </div>
+                        <div class="history-bazi">${analysis.基本信息.八字.年柱} ${analysis.基本信息.八字.月柱} ${analysis.基本信息.八字.日柱} ${analysis.基本信息.八字.时柱}</div>
+                        <div class="history-actions">
+                            <button class="view-btn" onclick="app.viewHistory(${index})">查看</button>
+                            <button class="delete-btn" onclick="app.deleteHistory(${index})">删除</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            viewHistory(index) {
+                const analysis = this.analysisHistory[index];
+                if (analysis) {
+                    this.currentAnalysis = analysis;
+                    this.displayResults(analysis);
+
+                    // 滚动到结果区域
+                    const resultsSection = document.querySelector('.results-section');
+                    if (resultsSection) {
+                        resultsSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            }
+
+            deleteHistory(index) {
+                if (confirm('确定要删除这条历史记录吗？')) {
+                    this.analysisHistory.splice(index, 1);
+                    this.saveToLocalStorage();
+                    this.updateHistoryDisplay();
+                    this.showMessage('历史记录已删除', 'success');
+                }
+            }
+
+            bindHistoryActions() {
+                const clearHistoryBtn = document.getElementById('clear-history-btn');
+                const exportHistoryBtn = document.getElementById('export-history-btn');
+
+                if (clearHistoryBtn) {
+                    clearHistoryBtn.addEventListener('click', () => {
+                        if (confirm('确定要清空所有历史记录吗？')) {
+                            this.analysisHistory = [];
+                            this.saveToLocalStorage();
+                            this.updateHistoryDisplay();
+                            this.showMessage('历史记录已清空', 'success');
+                        }
+                    });
+                }
+
+                if (exportHistoryBtn) {
+                    exportHistoryBtn.addEventListener('click', () => {
+                        this.exportHistory();
+                    });
+                }
+            }
+
+            exportHistory() {
+                if (this.analysisHistory.length === 0) {
+                    this.showMessage('没有可导出的历史记录', 'warning');
+                    return;
+                }
+
+                const content = this.analysisHistory.map((analysis, index) => {
+                    return `
+=======================================
+历史记录 ${index + 1}
+=======================================
+姓名：${analysis.基本信息.姓名}
+性别：${analysis.基本信息.性别}
+出生日期：${analysis.基本信息.出生日期}
+八字：${analysis.基本信息.八字.年柱} ${analysis.基本信息.八字.月柱} ${analysis.基本信息.八字.日柱} ${analysis.基本信息.八字.时柱}
+分析时间：${new Date(analysis.timestamp).toLocaleString()}
+综合建议：${analysis.综合建议.人生规划}
+                    `;
+                }).join('\n');
+
+                const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `八字实战技法分析历史_${new Date().toLocaleDateString()}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                this.showMessage('历史记录已导出', 'success');
+            }
+
+            bindHelpTabs() {
+                const tabButtons = document.querySelectorAll('.tab-btn');
+                const panels = document.querySelectorAll('.help-panel');
+
+                tabButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const targetPanel = button.dataset.tab;
+
+                        // 更新按钮状态
+                        tabButtons.forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
+
+                        // 更新面板显示
+                        panels.forEach(panel => panel.classList.remove('active'));
+                        const targetPanelElement = document.getElementById(`panel-${targetPanel}`);
+                        if (targetPanelElement) {
+                            targetPanelElement.classList.add('active');
+                        }
+                    });
+                });
+            }
+
+            loadDemoData() {
+                const demoData = {
+                    name: '张三',
+                    gender: '男',
+                    birthDate: '1990-05-15',
+                    birthTime: '14:30',
+                    liuNian: '甲辰 2024',
+                    focus: '综合'
+                };
+
+                // 填充表单
+                document.getElementById('name').value = demoData.name;
+                document.getElementById('gender').value = demoData.gender;
+                document.getElementById('birth-date').value = demoData.birthDate;
+                document.getElementById('birth-time').value = demoData.birthTime;
+                document.getElementById('liu-nian').value = demoData.liuNian;
+                document.getElementById('focus').value = demoData.focus;
+
+                this.showMessage('已加载演示案例数据', 'success');
+            }
+
+            clearForm() {
+                const form = document.getElementById('bazi-form');
+                if (form) {
+                    form.reset();
+                }
+
+                // 清空结果
+                const resultsContainer = document.getElementById('results-container');
+                if (resultsContainer) {
+                    resultsContainer.innerHTML = `
+                        <div class="placeholder">
+                            <div class="placeholder-icon">📝</div>
+                            <p>请输入基本信息并点击"开始实战技法分析"按钮</p>
+                        </div>
+                    `;
+                }
+
+                // 隐藏结果操作按钮
+                const resultsActions = document.getElementById('results-actions');
+                if (resultsActions) {
+                    resultsActions.style.display = 'none';
+                }
+
+                this.showMessage('表单已清空', 'success');
+            }
+
+            showMessage(message, type = 'info') {
+                const messageEl = document.createElement('div');
+                messageEl.className = `message message-${type}`;
+                messageEl.textContent = message;
+
+                document.body.appendChild(messageEl);
+
+                setTimeout(() => {
+                    if (messageEl.parentNode) {
+                        messageEl.parentNode.removeChild(messageEl);
+                    }
+                }, 3000);
+            }
+
+            bindResultsInteractions() {
+                // 添加展开/折叠功能
+                const resultTitles = document.querySelectorAll('.result-title');
+                resultTitles.forEach(title => {
+                    title.addEventListener('click', () => {
+                        const section = title.parentElement;
+                        section.classList.toggle('collapsed');
+                    });
+                });
+            }
+
+            delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            saveToLocalStorage() {
+                try {
+                    localStorage.setItem('bazi-stage4-analysis-history', JSON.stringify(this.analysisHistory));
+                } catch (error) {
+                    console.error('保存到本地存储失败:', error);
+                }
+            }
+
+            loadSavedData() {
+                try {
+                    const saved = localStorage.getItem('bazi-stage4-analysis-history');
+                    if (saved) {
+                        this.analysisHistory = JSON.parse(saved);
+                        this.updateHistoryDisplay();
+                    }
+                } catch (error) {
+                    console.error('加载本地存储数据失败:', error);
+                    this.analysisHistory = [];
+                }
+            }
+        }
+
+        // 初始化应用
+        let app;
+        document.addEventListener('DOMContentLoaded', () => {
+            app = new SimpleBaziApp();
+            console.log('第四阶段实战技法八字应用初始化完成');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>八字取象解读系统 - 基于《探索门八字取象秘法》</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .pillars-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .pillar-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 15px;
+            padding: 1.5rem;
+            color: white;
+            text-align: center;
+            transform: translateY(0);
+            transition: all 0.3s ease;
+        }
+
+        .pillar-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .analysis-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .analysis-card:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .tag {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            margin: 0.25rem;
+        }
+
+        .loading {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 1rem 0;
+        }
+
+        .tab-button {
+            background: transparent;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-radius: 10px 10px 0 0;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: white;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .tab-content {
+            background: white;
+            border-radius: 0 10px 10px 10px;
+            padding: 1.5rem;
+            min-height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- 头部 -->
+        <header class="text-center mb-8">
+            <h1 class="text-5xl font-bold text-white mb-4">
+                八字取象解读系统
+            </h1>
+            <p class="text-xl text-white/90 mb-2">
+                基于《探索门八字取象秘法》- 王庆
+            </p>
+            <p class="text-lg text-white/80">
+                第四阶段实战技法学习成果展示
+            </p>
+        </header>
+
+        <!-- 主要内容 -->
+        <main class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- 左侧：输入区域 -->
+            <section class="lg:col-span-1">
+                <div class="glass-morphism p-6">
+                    <h2 class="text-2xl font-bold mb-4 gradient-text">
+                        <i class="fas fa-edit mr-2"></i>八字输入
+                    </h2>
+
+                    <form id="baziForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                姓名
+                            </label>
+                            <input type="text" id="name"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                placeholder="请输入姓名" value="张三">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                性别
+                            </label>
+                            <select id="gender"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                <option value="男">男</option>
+                                <option value="女">女</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                出生日期
+                            </label>
+                            <input type="date" id="birthDate"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                value="1990-05-15">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                出生时间
+                            </label>
+                            <input type="time" id="birthTime"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                value="14:30">
+                        </div>
+
+                        <button type="submit"
+                            class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 rounded-lg font-medium hover:from-purple-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105">
+                            <i class="fas fa-search mr-2"></i>开始取象分析
+                        </button>
+                    </form>
+
+                    <!-- 快速示例 -->
+                    <div class="mt-6">
+                        <h3 class="text-lg font-semibold mb-3">快速示例</h3>
+                        <div class="space-y-2">
+                            <button onclick="loadExample('example1')"
+                                class="w-full text-left p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                                <div class="font-medium">事业成功案例</div>
+                                <div class="text-sm text-gray-600">甲午 丙戌 癸亥 乙卯</div>
+                            </button>
+                            <button onclick="loadExample('example2')"
+                                class="w-full text-left p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                                <div class="font-medium">婚姻波折案例</div>
+                                <div class="text-sm text-gray-600">庚子 房寅 戊申 庚申</div>
+                            </button>
+                            <button onclick="loadExample('example3')"
+                                class="w-full text-left p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                                <div class="font-medium">健康问题案例</div>
+                                <div class="text-sm text-gray-600">乙酉 己卯 戊戌 癸亥</div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 右侧：结果展示区域 -->
+            <section class="lg:col-span-2">
+                <!-- 四柱展示 -->
+                <div class="glass-morphism p-6 mb-6">
+                    <h2 class="text-2xl font-bold mb-4 gradient-text">
+                        <i class="fas fa-chart-bar mr-2"></i>四柱排盘
+                    </h2>
+                    <div id="pillarsDisplay" class="pillars-grid">
+                        <!-- 动态生成四柱 -->
+                    </div>
+                </div>
+
+                <!-- 分析结果标签页 -->
+                <div class="glass-morphism">
+                    <div class="flex border-b border-gray-200">
+                        <button class="tab-button active" onclick="switchTab('basic')">
+                            <i class="fas fa-star mr-2"></i>基础取象
+                        </button>
+                        <button class="tab-button" onclick="switchTab('personality')">
+                            <i class="fas fa-user mr-2"></i>性格分析
+                        </button>
+                        <button class="tab-button" onclick="switchTab('career')">
+                            <i class="fas fa-briefcase mr-2"></i>职业指导
+                        </button>
+                        <button class="tab-button" onclick="switchTab('visualization')">
+                            <i class="fas fa-chart-pie mr-2"></i>可视化
+                        </button>
+                    </div>
+
+                    <div id="tabContent" class="tab-content">
+                        <!-- 动态生成内容 -->
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 底部信息 -->
+        <footer class="text-center mt-12 text-white/80">
+            <p class="mb-2">
+                <i class="fas fa-book mr-2"></i>
+                基于《探索门八字取象秘法》- 王庆 理论实现
+            </p>
+            <p class="text-sm">
+                第四阶段实战技法学习 | 专业八字取象解读系统
+            </p>
+        </footer>
+    </div>
+
+    <!-- 引入系统代码 -->
+    <script src="xiangxiang-interpretation-system.js"></script>
+
+    <script>
+        // 全局变量
+        let xiangxiangSystem;
+        let currentAnalysis = null;
+        let currentTab = 'basic';
+
+        // 初始化系统
+        document.addEventListener('DOMContentLoaded', function() {
+            xiangxiangSystem = new XiangxiangInterpretationSystem();
+            console.log('取象解读系统初始化完成');
+        });
+
+        // 表单提交
+        document.getElementById('baziForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            analyzeBazi();
+        });
+
+        // 分析八字
+        async function analyzeBazi() {
+            const formData = {
+                name: document.getElementById('name').value,
+                gender: document.getElementById('gender').value,
+                birthDate: document.getElementById('birthDate').value,
+                birthTime: document.getElementById('birthTime').value
+            };
+
+            // 显示加载状态
+            showLoading();
+
+            // 模拟分析过程
+            setTimeout(() => {
+                // 生成模拟八字数据
+                const bazi = generateMockBazi(formData);
+
+                // 进行取象分析
+                currentAnalysis = xiangxiangSystem.comprehensiveAnalysis(bazi);
+
+                // 显示结果
+                displayResults(bazi, currentAnalysis);
+
+                // 隐藏加载状态
+                hideLoading();
+            }, 2000);
+        }
+
+        // 生成模拟八字数据
+        function generateMockBazi(formData) {
+            // 简化的八字生成逻辑，实际应该使用完整的排盘算法
+            const pillars = {
+                year: { stem: '甲', branch: '午' },
+                month: { stem: '丙', branch: '戌' },
+                day: { stem: '癸', branch: '亥' },
+                hour: { stem: '乙', branch: '卯' }
+            };
+
+            return {
+                name: formData.name,
+                gender: formData.gender,
+                birthDateTime: `${formData.birthDate} ${formData.birthTime}`,
+                pillars: pillars,
+                dayMaster: '癸',
+                tenGods: [
+                    { name: '正财', element: '火', strength: 'strong' },
+                    { name: '七杀', element: '土', strength: 'medium' },
+                    { name: '食神', element: '木', strength: 'strong' }
+                ],
+                elements: {
+                    wood: { strong: true, count: 2 },
+                    fire: { strong: true, count: 2 },
+                    earth: { weak: true, count: 1 },
+                    metal: { weak: true, count: 0 },
+                    water: { strong: true, count: 3 }
+                },
+                balance: {
+                    wood: { strong: true },
+                    fire: { strong: true },
+                    earth: { weak: true },
+                    metal: { weak: true },
+                    water: { strong: true }
+                },
+                patterns: ['木火通明'],
+                relationships: [],
+                spousePalace: { branch: '亥' },
+                spouseStar: { name: '正财', element: '火' },
+                timing: []
+            };
+        }
+
+        // 显示结果
+        function displayResults(bazi, analysis) {
+            // 显示四柱
+            displayPillars(bazi.pillars);
+
+            // 显示当前标签页内容
+            switchTab(currentTab);
+        }
+
+        // 显示四柱
+        function displayPillars(pillars) {
+            const container = document.getElementById('pillarsDisplay');
+            const pillarNames = ['年柱', '月柱', '日柱', '时柱'];
+            const pillarKeys = ['year', 'month', 'day', 'hour'];
+
+            container.innerHTML = pillarKeys.map((key, index) => `
+                <div class="pillar-card">
+                    <div class="text-sm opacity-80 mb-2">${pillarNames[index]}</div>
+                    <div class="text-3xl font-bold mb-1">
+                        ${pillars[key].stem}${pillars[key].branch}
+                    </div>
+                    <div class="text-sm opacity-90">
+                        ${getStemMeaning(pillars[key].stem)} ${getBranchMeaning(pillars[key].branch)}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 获取天干含义
+        function getStemMeaning(stem) {
+            const meanings = {
+                '甲': '木', '乙': '木',
+                '丙': '火', '丁': '火',
+                '戊': '土', '己': '土',
+                '庚': '金', '辛': '金',
+                '壬': '水', '癸': '水'
+            };
+            return meanings[stem] || '';
+        }
+
+        // 获取地支含义
+        function getBranchMeaning(branch) {
+            const meanings = {
+                '子': '水', '丑': '土', '寅': '木', '卯': '木',
+                '辰': '土', '巳': '火', '午': '火', '未': '土',
+                '申': '金', '酉': '金', '戌': '土', '亥': '水'
+            };
+            return meanings[branch] || '';
+        }
+
+        // 切换标签页
+        function switchTab(tab) {
+            currentTab = tab;
+
+            // 更新标签按钮状态
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // 显示对应内容
+            const content = document.getElementById('tabContent');
+
+            switch(tab) {
+                case 'basic':
+                    content.innerHTML = generateBasicContent();
+                    break;
+                case 'personality':
+                    content.innerHTML = generatePersonalityContent();
+                    break;
+                case 'career':
+                    content.innerHTML = generateCareerContent();
+                    break;
+                case 'visualization':
+                    content.innerHTML = generateVisualizationContent();
+                    break;
+            }
+        }
+
+        // 生成基础取象内容
+        function generateBasicContent() {
+            if (!currentAnalysis) return '<p>请先进行八字分析</p>';
+
+            return `
+                <div class="space-y-4">
+                    <div class="analysis-card">
+                        <h3 class="text-xl font-bold mb-3 text-purple-600">
+                            <i class="fas fa-star mr-2"></i>天干取象
+                        </h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            ${Object.keys(currentAnalysis.basic.stems).map(stem => `
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <div class="font-bold text-purple-700 mb-2">${stem}</div>
+                                    <div class="text-sm text-gray-700">
+                                        <div class="mb-1"><strong>基本：</strong>${currentAnalysis.basic.stems[stem].basic}</div>
+                                        <div><strong>性格：</strong>${currentAnalysis.basic.stems[stem].personality.join('、')}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="analysis-card">
+                        <h3 class="text-xl font-bold mb-3 text-blue-600">
+                            <i class="fas fa-globe mr-2"></i>地支取象
+                        </h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            ${Object.keys(currentAnalysis.basic.branches).map(branch => `
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <div class="font-bold text-blue-700 mb-2">${branch}</div>
+                                    <div class="text-sm text-gray-700">
+                                        <div class="mb-1"><strong>基本：</strong>${currentAnalysis.basic.branches[branch].basic}</div>
+                                        <div><strong>性格：</strong>${currentAnalysis.basic.branches[branch].personality.join('、')}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    ${currentAnalysis.advanced.patterns.length > 0 ? `
+                        <div class="analysis-card">
+                            <h3 class="text-xl font-bold mb-3 text-green-600">
+                                <i class="fas fa-award mr-2"></i>特殊格局
+                            </h3>
+                            <div class="bg-green-50 p-4 rounded-lg">
+                                <div class="font-bold text-green-700 mb-2">
+                                    ${currentAnalysis.advanced.patterns[0].name}
+                                </div>
+                                <div class="text-sm text-gray-700">
+                                    <div class="mb-2">${currentAnalysis.advanced.patterns[0].description}</div>
+                                    <div><strong>适合职业：</strong>${currentAnalysis.advanced.patterns[0].career.join('、')}</div>
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        // 生成性格分析内容
+        function generatePersonalityContent() {
+            if (!currentAnalysis) return '<p>请先进行八字分析</p>';
+
+            return `
+                <div class="space-y-4">
+                    <div class="analysis-card">
+                        <h3 class="text-xl font-bold mb-3 text-purple-600">
+                            <i class="fas fa-user-circle mr-2"></i>基本性格
+                        </h3>
+                        <div class="space-y-3">
+                            ${currentAnalysis.personality.basic.map(trait => `
+                                <div class="tag">${trait}</div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="analysis-card">
+                        <h3 class="text-xl font-bold mb-3 text-green-600">
+                            <i class="fas fa-plus-circle mr-2"></i>性格优势
+                        </h3>
+                        <ul class="space-y-2">
+                            ${currentAnalysis.personality.strengths.map(strength => `
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                                    <span>${strength}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+
+                    <div class="analysis-card">
+                        <h3 class="text-xl font-bold mb-3 text-red-600">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>需要改进
+                        </h3>
+                        <ul class="space-y-2">
+                            ${currentAnalysis.personality.weaknesses.map(weakness => `
+                                <li class="flex items-start">
+                                    <i class="fas fa-lightbulb text-yellow-500 mt-1 mr-2"></i>
+                                    <span>${weakness}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+
+                    <div class="analysis-card">
+                        <h3 class="text-xl font-bold mb-3 text-blue-600">
+                            <i class="fas fa-chart-line mr-2"></i>发展建议
+                        </h3>
+                        <ul class="space-y-2">
+                            ${currentAnalysis.personality.development.map(dev => `
+                                <li class="flex items-start">
+                                    <i class="fas fa-arrow-right text-blue-500 mt-1 mr-2"></i>
+                                    <span>${dev}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 生成职业指导内容
+        function generateCareerContent() {
+            if (!currentAnalysis) return '<p>请先进行八字分析</p>';
+
+            return `
+                <div class="space-y-4">
+                    <div class="analysis-card">
+                        <h3 class="text-xl font-bold mb-3 text-green-600">
+                            <i class="fas fa-check-circle mr-2"></i>适合职业
+                        </h3>
+                        <div class="space-y-3">
+                            ${currentAnalysis.career.suitable.map(career => `
+                                <div class="tag bg-green-100 text-green-800">${career}</div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="analysis-card">
+                        <h3 class="text-xl font-bold mb-3 text-red-600">
+                            <i class="fas fa-times-circle mr-2"></i>不太适合
+                        </h3>
+                        <div class="space-y-3">
+                            ${currentAnalysis.career.unsuitable.map(career => `
+                                <div class="tag bg-red-100 text-red-800">${career}</div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="analysis-card">
+                        <h3 class="text-xl font-bold mb-3 text-blue-600">
+                            <i class="fas fa-rocket mr-2"></i>发展方向
+                        </h3>
+                        <ul class="space-y-2">
+                            ${currentAnalysis.career.development.map(dev => `
+                                <li class="flex items-start">
+                                    <i class="fas fa-star text-yellow-500 mt-1 mr-2"></i>
+                                    <span>${dev}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+
+                    <div class="analysis-card">
+                        <h3 class="text-xl font-bold mb-3 text-purple-600">
+                            <i class="fas fa-clock mr-2"></i>发展时机
+                        </h3>
+                        <ul class="space-y-2">
+                            ${currentAnalysis.career.timing.map(timing => `
+                                <li class="flex items-start">
+                                    <i class="fas fa-calendar text-purple-500 mt-1 mr-2"></i>
+                                    <span>${timing}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 生成可视化内容
+        function generateVisualizationContent() {
+            if (!currentAnalysis) return '<p>请先进行八字分析</p>';
+
+            return `
+                <div class="space-y-6">
+                    <div class="analysis-card">
+                        <h3 class="text-xl font-bold mb-3 text-purple-600">
+                            <i class="fas fa-chart-pie mr-2"></i>五行分布
+                        </h3>
+                        <div class="chart-container">
+                            <canvas id="elementChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="analysis-card">
+                        <h3 class="text-xl font-bold mb-3 text-blue-600">
+                            <i class="fas fa-network-wired mr-2"></i>性格特征雷达图
+                        </h3>
+                        <div class="chart-container">
+                            <canvas id="personalityChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="analysis-card">
+                        <h3 class="text-xl font-bold mb-3 text-green-600">
+                            <i class="fas fa-briefcase mr-2"></i>职业适合度
+                        </h3>
+                        <div class="chart-container">
+                            <canvas id="careerChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 加载示例
+        function loadExample(example) {
+            const examples = {
+                example1: {
+                    name: '事业成功案例',
+                    birthDate: '1980-03-15',
+                    birthTime: '09:30'
+                },
+                example2: {
+                    name: '婚姻波折案例',
+                    birthDate: '1985-07-22',
+                    birthTime: '15:45'
+                },
+                example3: {
+                    name: '健康问题案例',
+                    birthDate: '1990-11-08',
+                    birthTime: '18:20'
+                }
+            };
+
+            const data = examples[example];
+            document.getElementById('name').value = data.name;
+            document.getElementById('birthDate').value = data.birthDate;
+            document.getElementById('birthTime').value = data.birthTime;
+
+            // 自动分析
+            analyzeBazi();
+        }
+
+        // 显示加载状态
+        function showLoading() {
+            const content = document.getElementById('tabContent');
+            content.innerHTML = `
+                <div class="flex flex-col items-center justify-center py-12">
+                    <div class="loading text-6xl text-purple-500 mb-4">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
+                    <p class="text-lg text-gray-600">正在进行取象分析...</p>
+                    <p class="text-sm text-gray-500 mt-2">基于《探索门八字取象秘法》理论</p>
+                </div>
+            `;
+        }
+
+        // 隐藏加载状态
+        function hideLoading() {
+            // 加载完成后会自动调用 switchTab 显示内容
+        }
+
+        // 创建图表
+        function createCharts() {
+            if (!currentAnalysis) return;
+
+            // 五行分布图
+            const elementCtx = document.getElementById('elementChart');
+            if (elementCtx) {
+                new Chart(elementCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['木', '火', '土', '金', '水'],
+                        datasets: [{
+                            data: [2, 2, 1, 0, 3],
+                            backgroundColor: [
+                                '#4CAF50',
+                                '#F44336',
+                                '#FF9800',
+                                '#795548',
+                                '#2196F3'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 性格特征雷达图
+            const personalityCtx = document.getElementById('personalityChart');
+            if (personalityCtx) {
+                new Chart(personalityCtx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['正直', '智慧', '热情', '稳重', '创新'],
+                        datasets: [{
+                            label: '性格特征',
+                            data: [85, 90, 75, 70, 80],
+                            backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                            borderColor: 'rgba(102, 126, 234, 1)',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                beginAtZero: true,
+                                max: 100
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 职业适合度图
+            const careerCtx = document.getElementById('careerChart');
+            if (careerCtx) {
+                new Chart(careerCtx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['教育', '文化', '金融', '管理', '咨询'],
+                        datasets: [{
+                            label: '职业适合度',
+                            data: [95, 88, 75, 82, 90],
+                            backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                            borderColor: 'rgba(76, 175, 80, 1)',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                beginAtZero: true,
+                                max: 100
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // 切换到可视化标签时创建图表
+        const originalSwitchTab = switchTab;
+        switchTab = function(tab) {
+            originalSwitchTab.call(this, tab);
+
+            if (tab === 'visualization') {
+                setTimeout(() => {
+                    createCharts();
+                }, 100);
+            }
+        };
+    </script>
+</body>
+</html>

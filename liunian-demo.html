@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>八字流年分析系统 - 基于《八字批流年实务》</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .year-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .year-card:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .year-type {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .good-year { background: #10b981; color: white; }
+        .normal-year { background: #f59e0b; color: white; }
+        .bad-year { background: #ef4444; color: white; }
+        .change-year { background: #8b5cf6; color: white; }
+
+        .score-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .score-high { background: #10b981; }
+        .score-medium { background: #f59e0b; }
+        .score-low { background: #ef4444; }
+
+        .aspect-score {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .aspect-bar {
+            flex: 1;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            margin: 0 0.5rem;
+            overflow: hidden;
+        }
+
+        .aspect-fill {
+            height: 100%;
+            transition: width 1s ease;
+        }
+
+        .loading {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 1rem 0;
+        }
+
+        .tab-button {
+            background: transparent;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-radius: 10px 10px 0 0;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: white;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .tab-content {
+            background: white;
+            border-radius: 0 10px 10px 10px;
+            padding: 1.5rem;
+            min-height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- 头部 -->
+        <header class="text-center mb-8">
+            <h1 class="text-5xl font-bold text-white mb-4">
+                八字流年分析系统
+            </h1>
+            <p class="text-xl text-white/90 mb-2">
+                基于《八字批流年实务》- 潘东光
+            </p>
+            <p class="text-lg text-white/80">
+                第四阶段实战技法学习成果展示
+            </p>
+        </header>
+
+        <!-- 主要内容 -->
+        <main class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- 左侧：输入区域 -->
+            <section class="lg:col-span-1">
+                <div class="glass-morphism p-6">
+                    <h2 class="text-2xl font-bold mb-4 gradient-text">
+                        <i class="fas fa-calendar-alt mr-2"></i>流年分析
+                    </h2>
+
+                    <form id="liunianForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                姓名
+                            </label>
+                            <input type="text" id="name"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                placeholder="请输入姓名" value="张三">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                性别
+                            </label>
+                            <select id="gender"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                <option value="男">男</option>
+                                <option value="女">女</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                出生日期
+                            </label>
+                            <input type="date" id="birthDate"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                value="1990-05-15">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                出生时间
+                            </label>
+                            <input type="time" id="birthTime"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                value="14:30">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                分析年份
+                            </label>
+                            <div class="flex space-x-2">
+                                <input type="number" id="startYear"
+                                    class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                    placeholder="起始年份" value="2024" min="2024" max="2034">
+                                <input type="number" id="endYear"
+                                    class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                    placeholder="结束年份" value="2028" min="2024" max="2034">
+                            </div>
+                        </div>
+
+                        <div class="flex space-x-2">
+                            <button type="button" onclick="analyzeLiunian()"
+                                class="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 rounded-lg font-medium hover:from-purple-600 hover:to-pink-600 transition-all duration-300">
+                                <i class="fas fa-search mr-2"></i>开始分析
+                            </button>
+                            <button type="button" onclick="calculateTiming()"
+                                class="flex-1 bg-gradient-to-r from-green-500 to-blue-500 text-white py-3 rounded-lg font-medium hover:from-green-600 hover:to-blue-600 transition-all duration-300">
+                                <i class="fas fa-clock mr-2"></i>应期计算
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- 快速示例 -->
+                    <div class="mt-6">
+                        <h3 class="text-lg font-semibold mb-3">快速示例</h3>
+                        <div class="space-y-2">
+                            <button onclick="loadExample('example1')"
+                                class="w-full text-left p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                                <div class="font-medium">事业发展案例</div>
+                                <div class="text-sm text-gray-600">1990年生，分析事业应期</div>
+                            </button>
+                            <button onclick="loadExample('example2')"
+                                class="w-full text-left p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                                <div class="font-medium">婚姻感情案例</div>
+                                <div class="text-sm text-gray-600">1985年生，分析婚姻应期</div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 右侧：结果展示区域 -->
+            <section class="lg:col-span-2">
+                <!-- 分析结果标签页 -->
+                <div class="glass-morphism">
+                    <div class="flex border-b border-gray-200">
+                        <button class="tab-button active" onclick="switchTab('years')">
+                            <i class="fas fa-calendar mr-2"></i>年度分析
+                        </button>
+                        <button class="tab-button" onclick="switchTab('timing')">
+                            <i class="fas fa-clock mr-2"></i>应期分析
+                        </button>
+                        <button class="tab-button" onclick="switchTab('trends')">
+                            <i class="fas fa-chart-line mr-2"></i>趋势图表
+                        </button>
+                        <button class="tab-button" onclick="switchTab('summary')">
+                            <i class="fas fa-file-alt mr-2"></i>综合报告
+                        </button>
+                    </div>
+
+                    <div id="tabContent" class="tab-content">
+                        <!-- 动态生成内容 -->
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 底部信息 -->
+        <footer class="text-center mt-12 text-white/80">
+            <p class="mb-2">
+                <i class="fas fa-book mr-2"></i>
+                基于《八字批流年实务》- 潘东光 理论实现
+            </p>
+            <p class="text-sm">
+                第四阶段实战技法学习 | 专业流年分析预测系统
+            </p>
+        </footer>
+    </div>
+
+    <!-- 引入系统代码 -->
+    <script src="liunian-analysis-system.js"></script>
+
+    <script>
+        // 全局变量
+        let liunianSystem;
+        let currentAnalysis = null;
+        let currentTab = 'years';
+
+        // 初始化系统
+        document.addEventListener('DOMContentLoaded', function() {
+            liunianSystem = new LiunianAnalysisSystem();
+            console.log('流年分析系统初始化完成');
+        });
+
+        // 分析流年
+        async function analyzeLiunian() {
+            const formData = {
+                name: document.getElementById('name').value,
+                gender: document.getElementById('gender').value,
+                birthDate: document.getElementById('birthDate').value,
+                birthTime: document.getElementById('birthTime').value,
+                startYear: parseInt(document.getElementById('startYear').value),
+                endYear: parseInt(document.getElementById('endYear').value)
+            };
+
+            // 验证输入
+            if (formData.startYear > formData.endYear) {
+                alert('起始年份不能大于结束年份');
+                return;
+            }
+
+            // 显示加载状态
+            showLoading();
+
+            // 模拟分析过程
+            setTimeout(() => {
+                // 生成模拟八字数据
+                const bazi = generateMockBazi(formData);
+
+                // 进行流年分析
+                currentAnalysis = liunianSystem.analyzeMultipleYears(
+                    bazi,
+                    formData.startYear,
+                    formData.endYear
+                );
+
+                // 显示结果
+                displayResults(bazi, currentAnalysis);
+
+                // 隐藏加载状态
+                hideLoading();
+            }, 2000);
+        }
+
+        // 计算应期
+        async function calculateTiming() {
+            const formData = {
+                name: document.getElementById('name').value,
+                gender: document.getElementById('gender').value,
+                birthDate: document.getElementById('birthDate').value,
+                birthTime: document.getElementById('birthTime').value
+            };
+
+            showLoading();
+
+            setTimeout(() => {
+                const bazi = generateMockBazi(formData);
+                const currentYear = new Date().getFullYear();
+
+                const timings = {
+                    marriage: liunianSystem.calculateMarriageTiming(bazi, currentYear, currentYear + 10),
+                    career: liunianSystem.calculateCareerTiming(bazi, currentYear, currentYear + 10),
+                    wealth: liunianSystem.calculateWealthTiming(bazi, currentYear, currentYear + 10)
+                };
+
+                currentAnalysis = { timings: timings, bazi: bazi };
+
+                // 切换到应期标签页
+                switchTab('timing');
+                hideLoading();
+            }, 1500);
+        }
+
+        // 生成模拟八字数据
+        function generateMockBazi(formData) {
+            const pillars = {
+                year: { stem: '庚', branch: '午' },
+                month: { stem: '壬', branch: '午' },
+                day: { stem: '癸', branch: '亥' },
+                hour: { stem: '乙', branch: '卯' }
+            };
+
+            return {
+                name: formData.name,
+                gender: formData.gender,
+                birthDateTime: `${formData.birthDate} ${formData.birthTime}`,
+                pillars: pillars,
+                dayMaster: '癸',
+                useGod: ['木', '火'],
+                favorElements: ['木', '火', '水']
+            };
+        }
+
+        // 显示结果
+        function displayResults(bazi, analysis) {
+            // 显示当前标签页内容
+            switchTab(currentTab);
+        }
+
+        // 切换标签页
+        function switchTab(tab) {
+            currentTab = tab;
+
+            // 更新标签按钮状态
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // 显示对应内容
+            const content = document.getElementById('tabContent');
+
+            switch(tab) {
+                case 'years':
+                    content.innerHTML = generateYearsContent();
+                    break;
+                case 'timing':
+                    content.innerHTML = generateTimingContent();
+                    break;
+                case 'trends':
+                    content.innerHTML = generateTrendsContent();
+                    break;
+                case 'summary':
+                    content.innerHTML = generateSummaryContent();
+                    break;
+            }
+        }
+
+        // 生成年度分析内容
+        function generateYearsContent() {
+            if (!currentAnalysis || !currentAnalysis.analyses) return '<p>请先进行流年分析</p>';
+
+            return `
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold text-purple-600">
+                            <i class="fas fa-calendar-alt mr-2"></i>
+                            ${currentAnalysis.range}年度运势分析
+                        </h3>
+                        <div class="text-sm text-gray-600">
+                            平均分数: ${currentAnalysis.summary.average.toFixed(1)}
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4">
+                        ${currentAnalysis.analyses.map(analysis => `
+                            <div class="year-card">
+                                <div class="flex justify-between items-start mb-3">
+                                    <div>
+                                        <div class="flex items-center mb-2">
+                                            <h4 class="text-lg font-bold mr-3">${analysis.year}年</h4>
+                                            <span class="year-type ${getYearTypeClass(analysis.type)}">
+                                                ${analysis.type}
+                                            </span>
+                                        </div>
+                                        <div class="text-sm text-gray-600 mb-2">
+                                            ${analysis.liunianGanZhi.stem}${analysis.liunianGanZhi.branch}年
+                                        </div>
+                                        <div class="text-sm">
+                                            ${analysis.summary.type}
+                                        </div>
+                                    </div>
+                                    <div class="score-circle ${getScoreClass(analysis.scores.overall)}">
+                                        ${analysis.scores.overall}
+                                    </div>
+                                </div>
+
+                                <div class="space-y-2">
+                                    <div class="aspect-score">
+                                        <div class="w-12 text-sm">事业</div>
+                                        <div class="aspect-bar">
+                                            <div class="aspect-fill bg-purple-500" style="width: ${analysis.scores.aspects.事业}%"></div>
+                                        </div>
+                                        <div class="w-12 text-sm text-right">${analysis.scores.aspects.事业}</div>
+                                    </div>
+                                    <div class="aspect-score">
+                                        <div class="w-12 text-sm">财运</div>
+                                        <div class="aspect-bar">
+                                            <div class="aspect-fill bg-green-500" style="width: ${analysis.scores.aspects.财运}%"></div>
+                                        </div>
+                                        <div class="w-12 text-sm text-right">${analysis.scores.aspects.财运}</div>
+                                    </div>
+                                    <div class="aspect-score">
+                                        <div class="w-12 text-sm">感情</div>
+                                        <div class="aspect-bar">
+                                            <div class="aspect-fill bg-pink-500" style="width: ${analysis.scores.aspects.感情}%"></div>
+                                        </div>
+                                        <div class="w-12 text-sm text-right">${analysis.scores.aspects.感情}</div>
+                                    </div>
+                                    <div class="aspect-score">
+                                        <div class="w-12 text-sm">健康</div>
+                                        <div class="aspect-bar">
+                                            <div class="aspect-fill bg-blue-500" style="width: ${analysis.scores.aspects.健康}%"></div>
+                                        </div>
+                                        <div class="w-12 text-sm text-right">${analysis.scores.aspects.健康}</div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-3 pt-3 border-t border-gray-200">
+                                    <div class="text-sm font-medium text-gray-700 mb-1">建议：</div>
+                                    <div class="text-sm text-gray-600">${analysis.suggestions.overall}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // 生成应期分析内容
+        function generateTimingContent() {
+            if (!currentAnalysis || !currentAnalysis.timings) return '<p>请先进行应期计算</p>';
+
+            const { timings, bazi } = currentAnalysis;
+
+            return `
+                <div class="space-y-6">
+                    <h3 class="text-xl font-bold text-purple-600">
+                        <i class="fas fa-clock mr-2"></i>
+                        重要事件应期分析
+                    </h3>
+
+                    ${timings.marriage && timings.marriage.length > 0 ? `
+                        <div class="year-card">
+                            <h4 class="text-lg font-bold text-pink-600 mb-3">
+                                <i class="fas fa-heart mr-2"></i>婚姻应期
+                            </h4>
+                            <div class="space-y-3">
+                                ${timings.marriage.map(timing => `
+                                    <div class="flex justify-between items-center p-3 bg-pink-50 rounded-lg">
+                                        <div>
+                                            <div class="font-medium">${timing.year}年</div>
+                                            <div class="text-sm text-gray-600">${timing.reason}</div>
+                                        </div>
+                                        <div class="text-sm font-medium text-pink-600">
+                                            可信度: ${timing.confidence}%
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    ${timings.career && timings.career.length > 0 ? `
+                        <div class="year-card">
+                            <h4 class="text-lg font-bold text-purple-600 mb-3">
+                                <i class="fas fa-briefcase mr-2"></i>事业应期
+                            </h4>
+                            <div class="space-y-3">
+                                ${timings.career.map(timing => `
+                                    <div class="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                                        <div>
+                                            <div class="font-medium">${timing.year}年</div>
+                                            <div class="text-sm text-gray-600">${timing.reason}</div>
+                                        </div>
+                                        <div class="text-sm font-medium text-purple-600">
+                                            可信度: ${timing.confidence}%
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    ${timings.wealth && timings.wealth.length > 0 ? `
+                        <div class="year-card">
+                            <h4 class="text-lg font-bold text-green-600 mb-3">
+                                <i class="fas fa-coins mr-2"></i>财运应期
+                            </h4>
+                            <div class="space-y-3">
+                                ${timings.wealth.map(timing => `
+                                    <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                                        <div>
+                                            <div class="font-medium">${timing.year}年</div>
+                                            <div class="text-sm text-gray-600">${timing.reason}</div>
+                                        </div>
+                                        <div class="text-sm font-medium text-green-600">
+                                            可信度: ${timing.confidence}%
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <div class="year-card">
+                        <h4 class="text-lg font-bold text-blue-600 mb-3">
+                            <i class="fas fa-lightbulb mr-2"></i>综合建议
+                        </h4>
+                        <div class="text-sm text-gray-700">
+                            ${generateTimingAdvice(timings)}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 生成趋势图表内容
+        function generateTrendsContent() {
+            if (!currentAnalysis || !currentAnalysis.analyses) return '<p>请先进行流年分析</p>';
+
+            return `
+                <div class="space-y-6">
+                    <h3 class="text-xl font-bold text-purple-600">
+                        <i class="fas fa-chart-line mr-2"></i>
+                        流年运势趋势图
+                    </h3>
+
+                    <div class="chart-container">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="comparisonChart"></canvas>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="year-card">
+                            <h4 class="text-lg font-bold text-green-600 mb-2">
+                                <i class="fas fa-arrow-up mr-2"></i>最佳年份
+                            </h4>
+                            <div class="text-2xl font-bold text-green-600 mb-1">
+                                ${currentAnalysis.summary.bestYear.year}年
+                            </div>
+                            <div class="text-sm text-gray-600">
+                                得分: ${currentAnalysis.summary.bestYear.score}分
+                                <br>类型: ${currentAnalysis.summary.bestYear.type}
+                            </div>
+                        </div>
+
+                        <div class="year-card">
+                            <h4 class="text-lg font-bold text-red-600 mb-2">
+                                <i class="fas fa-arrow-down mr-2"></i>挑战年份
+                            </h4>
+                            <div class="text-2xl font-bold text-red-600 mb-1">
+                                ${currentAnalysis.summary.worstYear.year}年
+                            </div>
+                            <div class="text-sm text-gray-600">
+                                得分: ${currentAnalysis.summary.worstYear.score}分
+                                <br>类型: ${currentAnalysis.summary.worstYear.type}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 生成综合报告内容
+        function generateSummaryContent() {
+            if (!currentAnalysis) return '<p>请先进行分析</p>';
+
+            if (currentAnalysis.analyses) {
+                // 流年分析报告
+                return `
+                    <div class="space-y-6">
+                        <h3 class="text-xl font-bold text-purple-600">
+                            <i class="fas fa-file-alt mr-2"></i>
+                            流年分析综合报告
+                        </h3>
+
+                        <div class="year-card">
+                            <h4 class="text-lg font-bold mb-3">分析概述</h4>
+                            <div class="space-y-2 text-sm">
+                                <p><strong>分析时间：</strong>${currentAnalysis.range}</p>
+                                <p><strong>平均运势：</strong>${currentAnalysis.summary.average.toFixed(1)}分</p>
+                                <p><strong>最佳年份：</strong>${currentAnalysis.summary.bestYear.year}年（${currentAnalysis.summary.bestYear.score}分）</p>
+                                <p><strong>挑战年份：</strong>${currentAnalysis.summary.worstYear.year}年（${currentAnalysis.summary.worstYear.score}分）</p>
+                            </div>
+                        </div>
+
+                        <div class="year-card">
+                            <h4 class="text-lg font-bold mb-3">发展建议</h4>
+                            <div class="text-sm text-gray-700">
+                                ${currentAnalysis.summary.recommendation}
+                            </div>
+                        </div>
+
+                        <div class="year-card">
+                            <h4 class="text-lg font-bold mb-3">各年度详情</h4>
+                            <div class="space-y-2">
+                                ${currentAnalysis.analyses.map(analysis => `
+                                    <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                                        <span class="font-medium">${analysis.year}年</span>
+                                        <span class="year-type ${getYearTypeClass(analysis.type)}">${analysis.type}</span>
+                                        <span class="text-sm">${analysis.scores.overall}分</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (currentAnalysis.timings) {
+                // 应期分析报告
+                return `
+                    <div class="space-y-6">
+                        <h3 class="text-xl font-bold text-purple-600">
+                            <i class="fas fa-clock mr-2"></i>
+                            应期分析综合报告
+                        </h3>
+
+                        <div class="year-card">
+                            <h4 class="text-lg font-bold mb-3">应期统计</h4>
+                            <div class="grid grid-cols-3 gap-4 text-center">
+                                <div>
+                                    <div class="text-2xl font-bold text-pink-600">
+                                        ${currentAnalysis.timings.marriage ? currentAnalysis.timings.marriage.length : 0}
+                                    </div>
+                                    <div class="text-sm text-gray-600">婚姻应期</div>
+                                </div>
+                                <div>
+                                    <div class="text-2xl font-bold text-purple-600">
+                                        ${currentAnalysis.timings.career ? currentAnalysis.timings.career.length : 0}
+                                    </div>
+                                    <div class="text-sm text-gray-600">事业应期</div>
+                                </div>
+                                <div>
+                                    <div class="text-2xl font-bold text-green-600">
+                                        ${currentAnalysis.timings.wealth ? currentAnalysis.timings.wealth.length : 0}
+                                    </div>
+                                    <div class="text-sm text-gray-600">财运应期</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="year-card">
+                            <h4 class="text-lg font-bold mb-3">综合建议</h4>
+                            <div class="text-sm text-gray-700">
+                                ${generateTimingAdvice(currentAnalysis.timings)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // 获取年份类型样式类
+        function getYearTypeClass(type) {
+            const classMap = {
+                '吉利流年': 'good-year',
+                '平稳流年': 'normal-year',
+                '困难流年': 'bad-year',
+                '变动流年': 'change-year'
+            };
+            return classMap[type] || 'normal-year';
+        }
+
+        // 获取分数样式类
+        function getScoreClass(score) {
+            if (score >= 80) return 'score-high';
+            if (score >= 60) return 'score-medium';
+            return 'score-low';
+        }
+
+        // 生成应期建议
+        function generateTimingAdvice(timings) {
+            let advice = "";
+
+            if (timings.marriage && timings.marriage.length > 0) {
+                advice += `根据分析，您在${timings.marriage.map(t => t.year).join('、')}年前后有较好的感情发展机会，建议多参加社交活动，把握缘分。`;
+            }
+
+            if (timings.career && timings.career.length > 0) {
+                advice += `事业发展的重要时期在${timings.career.map(t => t.year).join('、')}年，建议提前规划，积极进取。`;
+            }
+
+            if (timings.wealth && timings.wealth.length > 0) {
+                advice += `财运较旺的年份是${timings.wealth.map(t => t.year).join('、')}年，可以考虑投资理财，但要谨慎决策。`;
+            }
+
+            return advice || "根据当前分析，近期没有特别明显的应期，建议稳扎稳打，继续积累实力。";
+        }
+
+        // 加载示例
+        function loadExample(example) {
+            const examples = {
+                example1: {
+                    name: '事业发展案例',
+                    birthDate: '1990-05-15',
+                    birthTime: '14:30',
+                    startYear: 2024,
+                    endYear: 2028
+                },
+                example2: {
+                    name: '婚姻感情案例',
+                    birthDate: '1985-08-22',
+                    birthTime: '10:15',
+                    startYear: 2024,
+                    endYear: 2028
+                }
+            };
+
+            const data = examples[example];
+            document.getElementById('name').value = data.name;
+            document.getElementById('birthDate').value = data.birthDate;
+            document.getElementById('birthTime').value = data.birthTime;
+            document.getElementById('startYear').value = data.startYear;
+            document.getElementById('endYear').value = data.endYear;
+
+            // 自动分析
+            analyzeLiunian();
+        }
+
+        // 显示加载状态
+        function showLoading() {
+            const content = document.getElementById('tabContent');
+            content.innerHTML = `
+                <div class="flex flex-col items-center justify-center py-12">
+                    <div class="loading text-6xl text-purple-500 mb-4">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
+                    <p class="text-lg text-gray-600">正在进行流年分析...</p>
+                    <p class="text-sm text-gray-500 mt-2">基于《八字批流年实务》理论</p>
+                </div>
+            `;
+        }
+
+        // 隐藏加载状态
+        function hideLoading() {
+            // 加载完成后会自动调用 switchTab 显示内容
+        }
+
+        // 创建图表
+        function createCharts() {
+            if (!currentAnalysis || !currentAnalysis.analyses) return;
+
+            // 趋势图
+            const trendCtx = document.getElementById('trendChart');
+            if (trendCtx) {
+                const trendData = liunianSystem.createTrendChart(currentAnalysis.analyses);
+                new Chart(trendCtx, trendData);
+            }
+
+            // 对比图
+            const comparisonCtx = document.getElementById('comparisonChart');
+            if (comparisonCtx) {
+                const comparisonData = liunianSystem.createYearComparisonChart(currentAnalysis.analyses);
+                new Chart(comparisonCtx, comparisonData);
+            }
+        }
+
+        // 切换到趋势图表标签时创建图表
+        const originalSwitchTab = switchTab;
+        switchTab = function(tab) {
+            originalSwitchTab.call(this, tab);
+
+            if (tab === 'trends') {
+                setTimeout(() => {
+                    createCharts();
+                }, 100);
+            }
+        };
+    </script>
+</body>
+</html>

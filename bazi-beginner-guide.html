@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>八字入门基础 - 中国传统智慧学习平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+        :root {
+            --primary-red: #dc2626;
+            --primary-gold: #f59e0b;
+            --bg-cream: #fefce8;
+            --bg-light: #fff7ed;
+            --text-primary: #1f2937;
+            --text-secondary: #4b5563;
+            --border-light: #fed7aa;
+            --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #fefce8 0%, #fff7ed 100%);
+            min-height: 100vh;
+        }
+
+        .serif-title {
+            font-family: 'Noto Serif SC', serif;
+        }
+
+        .chinese-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0L100 100M100 0L0 100' stroke='%23fbbf24' stroke-width='0.5' opacity='0.3'/%3E%3C/svg%3E");
+        }
+
+        .card-shadow {
+            box-shadow: var(--shadow-soft);
+            transition: all 0.3s ease;
+        }
+
+        .card-shadow:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .section-card {
+            background: white;
+            border: 2px solid var(--border-light);
+            border-radius: 16px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-red), var(--primary-gold));
+        }
+
+        .element-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin: 0.25rem;
+        }
+
+        .wood { background: #dcfce7; color: #15803d; }
+        .fire { background: #fee2e2; color: #dc2626; }
+        .earth { background: #fef3c7; color: #d97706; }
+        .metal { background: #f3f4f6; color: #4b5563; }
+        .water { background: #dbeafe; color: #2563eb; }
+
+        .table-custom {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table-custom th {
+            background: var(--bg-light);
+            color: var(--text-primary);
+            font-weight: 600;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .table-custom td {
+            padding: 0.75rem 1rem;
+            text-align: center;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .table-custom tr:hover td {
+            background: var(--bg-cream);
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-red);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.125rem;
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .accordion-content.open {
+            max-height: 500px;
+        }
+
+        .decorative-corner {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            opacity: 0.1;
+        }
+
+        .corner-tl {
+            top: -10px;
+            left: -10px;
+            border-top: 3px solid var(--primary-red);
+            border-left: 3px solid var(--primary-red);
+            border-radius: 12px 0 0 0;
+        }
+
+        .corner-br {
+            bottom: -10px;
+            right: -10px;
+            border-bottom: 3px solid var(--primary-gold);
+            border-right: 3px solid var(--primary-gold);
+            border-radius: 0 0 12px 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .nav-scroll {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <!-- 装饰性顶部 -->
+    <div class="chinese-pattern h-2"></div>
+
+    <!-- 头部 -->
+    <header class="bg-white shadow-sm sticky top-0 z-50 nav-scroll">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-red-600 to-yellow-500 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-yin-yang text-white text-xl"></i>
+                    </div>
+                    <h1 class="serif-title text-2xl md:text-3xl font-bold text-gray-800">
+                        八字入门基础
+                    </h1>
+                </div>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="#what-is-bazi" class="text-gray-600 hover:text-red-600 transition-colors">什么是八字</a>
+                    <a href="#tiangan-dizhi" class="text-gray-600 hover:text-red-600 transition-colors">天干地支</a>
+                    <a href="#ten-gods" class="text-gray-600 hover:text-red-600 transition-colors">十神基础</a>
+                    <a href="#steps" class="text-gray-600 hover:text-red-600 transition-colors">排盘步骤</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main class="container mx-auto px-4 py-8 max-w-6xl">
+
+        <!-- 欢迎语 -->
+        <section class="text-center mb-12 fade-in">
+            <p class="text-lg text-gray-600 mb-4">
+                探索中华传统智慧，了解千年命理文化
+            </p>
+            <div class="flex justify-center space-x-4 text-sm text-gray-500">
+                <span><i class="fas fa-clock mr-1"></i>阅读时间：约15分钟</span>
+                <span><i class="fas fa-layer-group mr-1"></i>难度：初级入门</span>
+            </div>
+        </section>
+
+        <!-- 什么是八字 -->
+        <section id="what-is-bazi" class="mb-16 fade-in">
+            <div class="section-card">
+                <div class="decorative-corner corner-tl"></div>
+                <div class="decorative-corner corner-br"></div>
+
+                <div class="flex items-center mb-6">
+                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4">
+                        <i class="fas fa-book text-red-600 text-xl"></i>
+                    </div>
+                    <h2 class="serif-title text-2xl font-bold text-gray-800">
+                        什么是八字（四柱八字）
+                    </h2>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4 text-gray-700">
+                            <i class="fas fa-info-circle text-blue-500 mr-2"></i>
+                            基本概念
+                        </h3>
+                        <p class="text-gray-600 leading-relaxed mb-4">
+                            八字，又称"四柱命理"，是中国传统文化中一种推算个人命运的方法。它根据一个人出生的年、月、日、时，各配以天干地支，形成八个字，故称"八字"。
+                        </p>
+                        <p class="text-gray-600 leading-relaxed">
+                            这八个字就像人生的"密码"，包含了一个人一生的基本信息和运势走向。通过分析这些字的组合关系，可以了解一个人的性格特征、事业发展、婚姻状况、健康状况等方面。
+                        </p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4 text-gray-700">
+                            <i class="fas fa-chart-pie text-green-500 mr-2"></i>
+                            四柱构成
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex items-start">
+                                <span class="step-number mr-3">年</span>
+                                <div>
+                                    <div class="font-medium text-gray-700">年柱 - 祖上与早年</div>
+                                    <div class="text-sm text-gray-600">代表出身背景、祖辈关系、1-16岁运势</div>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="step-number mr-3">月</span>
+                                <div>
+                                    <div class="font-medium text-gray-700">月柱 - 父母与青年</div>
+                                    <div class="text-sm text-gray-600">代表父母关系、事业发展、17-32岁运势</div>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="step-number mr-3">日</span>
+                                <div>
+                                    <div class="font-medium text-gray-700">日柱 - 自己与中年</div>
+                                    <div class="text-sm text-gray-600">代表本人性格、婚姻状况、33-48岁运势</div>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="step-number mr-3">时</span>
+                                <div>
+                                    <div class="font-medium text-gray-700">时柱 - 子女与晚年</div>
+                                    <div class="text-sm text-gray-600">代表子女情况、晚年生活、49岁以后运势</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 天干地支 -->
+        <section id="tiangan-dizhi" class="mb-16 fade-in">
+            <div class="section-card">
+                <div class="decorative-corner corner-tl"></div>
+                <div class="decorative-corner corner-br"></div>
+
+                <div class="flex items-center mb-6">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                        <i class="fas fa-yin-yang text-green-600 text-xl"></i>
+                    </div>
+                    <h2 class="serif-title text-2xl font-bold text-gray-800">
+                        天干地支
+                    </h2>
+                </div>
+
+                <!-- 天干 -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-700 flex items-center">
+                        <i class="fas fa-sun text-yellow-500 mr-2"></i>
+                        天干（十个）
+                    </h3>
+                    <p class="text-gray-600 mb-4">
+                        天干是天文的符号，共有十个，按顺序循环使用。每个天干都有对应的五行属性和阴阳属性。
+                    </p>
+
+                    <div class="overflow-x-auto">
+                        <table class="table-custom">
+                            <thead>
+                                <tr>
+                                    <th>顺序</th>
+                                    <th>天干</th>
+                                    <th>读音</th>
+                                    <th>五行</th>
+                                    <th>阴阳</th>
+                                    <th>象征意义</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td class="font-bold">甲</td>
+                                    <td>jiǎ</td>
+                                    <td><span class="element-badge wood">木</span></td>
+                                    <td>阳</td>
+                                    <td class="text-left">大树、参天、正直</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td class="font-bold">乙</td>
+                                    <td>yǐ</td>
+                                    <td><span class="element-badge wood">木</span></td>
+                                    <td>阴</td>
+                                    <td class="text-left">花草、柔韧、温和</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td class="font-bold">丙</td>
+                                    <td>bǐng</td>
+                                    <td><span class="element-badge fire">火</span></td>
+                                    <td>阳</td>
+                                    <td class="text-left">太阳、光明、热烈</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td class="font-bold">丁</td>
+                                    <td>dīng</td>
+                                    <td><span class="element-badge fire">火</span></td>
+                                    <td>阴</td>
+                                    <td class="text-left">灯火、温暖、细腻</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td class="font-bold">戊</td>
+                                    <td>wù</td>
+                                    <td><span class="element-badge earth">土</span></td>
+                                    <td>阳</td>
+                                    <td class="text-left">高山、厚重、诚信</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td class="font-bold">己</td>
+                                    <td>jǐ</td>
+                                    <td><span class="element-badge earth">土</span></td>
+                                    <td>阴</td>
+                                    <td class="text-left">田园、包容、温和</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td class="font-bold">庚</td>
+                                    <td>gēng</td>
+                                    <td><span class="element-badge metal">金</span></td>
+                                    <td>阳</td>
+                                    <td class="text-left">刀剑、刚强、决断</td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td class="font-bold">辛</td>
+                                    <td>xīn</td>
+                                    <td><span class="element-badge metal">金</span></td>
+                                    <td>阴</td>
+                                    <td class="text-left">珠宝、精致、细腻</td>
+                                </tr>
+                                <tr>
+                                    <td>9</td>
+                                    <td class="font-bold">壬</td>
+                                    <td>rén</td>
+                                    <td><span class="element-badge water">水</span></td>
+                                    <td>阳</td>
+                                    <td class="text-left">江河、智慧、变化</td>
+                                </tr>
+                                <tr>
+                                    <td>10</td>
+                                    <td class="font-bold">癸</td>
+                                    <td>guǐ</td>
+                                    <td><span class="element-badge water">水</span></td>
+                                    <td>阴</td>
+                                    <td class="text-left">雨露、滋润、温柔</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 地支 -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-4 text-gray-700 flex items-center">
+                        <i class="fas fa-moon text-blue-500 mr-2"></i>
+                        地支（十二个）
+                    </h3>
+                    <p class="text-gray-600 mb-4">
+                        地支是地理的符号，共有十二个，按顺序循环使用。每个地支都有对应的五行属性、生肖和时间。
+                    </p>
+
+                    <div class="overflow-x-auto">
+                        <table class="table-custom">
+                            <thead>
+                                <tr>
+                                    <th>顺序</th>
+                                    <th>地支</th>
+                                    <th>读音</th>
+                                    <th>五行</th>
+                                    <th>生肖</th>
+                                    <th>时辰</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td class="font-bold">子</td>
+                                    <td>zǐ</td>
+                                    <td><span class="element-badge water">水</span></td>
+                                    <td>🐭 鼠</td>
+                                    <td>23:00-01:00</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td class="font-bold">丑</td>
+                                    <td>chǒu</td>
+                                    <td><span class="element-badge earth">土</span></td>
+                                    <td>🐮 牛</td>
+                                    <td>01:00-03:00</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td class="font-bold">寅</td>
+                                    <td>yín</td>
+                                    <td><span class="element-badge wood">木</span></td>
+                                    <td>🐯 虎</td>
+                                    <td>03:00-05:00</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td class="font-bold">卯</td>
+                                    <td>mǎo</td>
+                                    <td><span class="element-badge wood">木</span></td>
+                                    <td>🐰 兔</td>
+                                    <td>05:00-07:00</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td class="font-bold">辰</td>
+                                    <td>chén</td>
+                                    <td><span class="element-badge earth">土</span></td>
+                                    <td>🐲 龙</td>
+                                    <td>07:00-09:00</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td class="font-bold">巳</td>
+                                    <td>sì</td>
+                                    <td><span class="element-badge fire">火</span></td>
+                                    <td>🐍 蛇</td>
+                                    <td>09:00-11:00</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td class="font-bold">午</td>
+                                    <td>wǔ</td>
+                                    <td><span class="element-badge fire">火</span></td>
+                                    <td>🐴 马</td>
+                                    <td>11:00-13:00</td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td class="font-bold">未</td>
+                                    <td>wèi</td>
+                                    <td><span class="element-badge earth">土</span></td>
+                                    <td>🐏 羊</td>
+                                    <td>13:00-15:00</td>
+                                </tr>
+                                <tr>
+                                    <td>9</td>
+                                    <td class="font-bold">申</td>
+                                    <td>shēn</td>
+                                    <td><span class="element-badge metal">金</span></td>
+                                    <td>🐒 猴</td>
+                                    <td>15:00-17:00</td>
+                                </tr>
+                                <tr>
+                                    <td>10</td>
+                                    <td class="font-bold">酉</td>
+                                    <td>yǒu</td>
+                                    <td><span class="element-badge metal">金</span></td>
+                                    <td>🐔 鸡</td>
+                                    <td>17:00-19:00</td>
+                                </tr>
+                                <tr>
+                                    <td>11</td>
+                                    <td class="font-bold">戌</td>
+                                    <td>xū</td>
+                                    <td><span class="element-badge earth">土</span></td>
+                                    <td>🐕 狗</td>
+                                    <td>19:00-21:00</td>
+                                </tr>
+                                <tr>
+                                    <td>12</td>
+                                    <td class="font-bold">亥</td>
+                                    <td>hài</td>
+                                    <td><span class="element-badge water">水</span></td>
+                                    <td>🐷 猪</td>
+                                    <td>21:00-23:00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 十神基础 -->
+        <section id="ten-gods" class="mb-16 fade-in">
+            <div class="section-card">
+                <div class="decorative-corner corner-tl"></div>
+                <div class="decorative-corner corner-br"></div>
+
+                <div class="flex items-center mb-6">
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+                        <i class="fas fa-star text-purple-600 text-xl"></i>
+                    </div>
+                    <h2 class="serif-title text-2xl font-bold text-gray-800">
+                        十神的基本定义
+                    </h2>
+                </div>
+
+                <p class="text-gray-600 mb-6">
+                    十神是八字分析中的重要概念，它描述了日主与其他七个天干之间的关系。通过十神，我们可以了解一个人的性格特征、人际关系、事业方向等。
+                </p>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- 正官 -->
+                    <div class="card-shadow bg-white rounded-lg p-6 border border-gray-200">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                <span class="text-blue-600 font-bold">正官</span>
+                            </div>
+                            <div class="text-2xl">👨‍💼</div>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 mb-2">正官 - 管理与约束</h4>
+                        <p class="text-sm text-gray-600">
+                            代表事业、地位、纪律、责任感。有正官的人通常稳重可靠，适合从事管理工作。
+                        </p>
+                    </div>
+
+                    <!-- 七杀 -->
+                    <div class="card-shadow bg-white rounded-lg p-6 border border-gray-200">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mr-3">
+                                <span class="text-red-600 font-bold">七杀</span>
+                            </div>
+                            <div class="text-2xl">⚔️</div>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 mb-2">七杀 - 权威与挑战</h4>
+                        <p class="text-sm text-gray-600">
+                            代表权力、威严、挑战、压力。有七杀的人通常有魄力，适合从事军警、法律等职业。
+                        </p>
+                    </div>
+
+                    <!-- 正财 -->
+                    <div class="card-shadow bg-white rounded-lg p-6 border border-gray-200">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                                <span class="text-green-600 font-bold">正财</span>
+                            </div>
+                            <div class="text-2xl">💰</div>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 mb-2">正财 - 稳定财富</h4>
+                        <p class="text-sm text-gray-600">
+                            代表稳定的收入、财富、节俭。有正财的人通常理财能力强，适合从事稳定的职业。
+                        </p>
+                    </div>
+
+                    <!-- 偏财 -->
+                    <div class="card-shadow bg-white rounded-lg p-6 border border-gray-200">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center mr-3">
+                                <span class="text-yellow-600 font-bold">偏财</span>
+                            </div>
+                            <div class="text-2xl">💎</div>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 mb-2">偏财 - 意外之财</h4>
+                        <p class="text-sm text-gray-600">
+                            代表意外之财、商业机会、投机。有偏财的人通常善于经商，有机会获得意外收获。
+                        </p>
+                    </div>
+
+                    <!-- 正印 -->
+                    <div class="card-shadow bg-white rounded-lg p-6 border border-gray-200">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mr-3">
+                                <span class="text-purple-600 font-bold">正印</span>
+                            </div>
+                            <div class="text-2xl">📚</div>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 mb-2">正印 - 学习与保护</h4>
+                        <p class="text-sm text-gray-600">
+                            代表学习、知识、贵人、保护。有正印的人通常学习能力强，容易得到贵人帮助。
+                        </p>
+                    </div>
+
+                    <!-- 偏印 -->
+                    <div class="card-shadow bg-white rounded-lg p-6 border border-gray-200">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center mr-3">
+                                <span class="text-indigo-600 font-bold">偏印</span>
+                            </div>
+                            <div class="text-2xl">🔍</div>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 mb-2">偏印 - 独特思维</h4>
+                        <p class="text-sm text-gray-600">
+                            代表独特思维、专业技能、非传统学习。有偏印的人通常有特殊才能，适合专业技术工作。
+                        </p>
+                    </div>
+
+                    <!-- 比肩 -->
+                    <div class="card-shadow bg-white rounded-lg p-6 border border-gray-200">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mr-3">
+                                <span class="text-gray-600 font-bold">比肩</span>
+                            </div>
+                            <div class="text-2xl">🤝</div>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 mb-2">比肩 - 朋友与同辈</h4>
+                        <p class="text-sm text-gray-600">
+                            代表朋友、同辈、自尊心、竞争。有比肩的人通常朋友众多，有较强的竞争意识。
+                        </p>
+                    </div>
+
+                    <!-- 劫财 -->
+                    <div class="card-shadow bg-white rounded-lg p-6 border border-gray-200">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center mr-3">
+                                <span class="text-orange-600 font-bold">劫财</span>
+                            </div>
+                            <div class="text-2xl">🔄</div>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 mb-2">劫财 - 争夺与消耗</h4>
+                        <p class="text-sm text-gray-600">
+                            代表破财、争夺、社交活跃。有劫财的人通常社交能力强，但要注意财务管理。
+                        </p>
+                    </div>
+
+                    <!-- 食神 -->
+                    <div class="card-shadow bg-white rounded-lg p-6 border border-gray-200">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center mr-3">
+                                <span class="text-pink-600 font-bold">食神</span>
+                            </div>
+                            <div class="text-2xl">🎨</div>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 mb-2">食神 - 享受与表达</h4>
+                        <p class="text-sm text-gray-600">
+                            代表享受、艺术、表达、口福。有食神的人通常多才多艺，善于表达，生活品质高。
+                        </p>
+                    </div>
+
+                    <!-- 伤官 -->
+                    <div class="card-shadow bg-white rounded-lg p-6 border border-gray-200">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center mr-3">
+                                <span class="text-teal-600 font-bold">伤官</span>
+                            </div>
+                            <div class="text-2xl">💡</div>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 mb-2">伤官 - 创新与叛逆</h4>
+                        <p class="text-sm text-gray-600">
+                            代表创新、智慧、叛逆、口才。有伤官的人通常聪明机智，有创新精神，但要注意言语。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 排盘步骤 -->
+        <section id="steps" class="mb-16 fade-in">
+            <div class="section-card">
+                <div class="decorative-corner corner-tl"></div>
+                <div class="decorative-corner corner-br"></div>
+
+                <div class="flex items-center mb-6">
+                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mr-4">
+                        <i class="fas fa-list-ol text-orange-600 text-xl"></i>
+                    </div>
+                    <h2 class="serif-title text-2xl font-bold text-gray-800">
+                        排盘的基本步骤
+                    </h2>
+                </div>
+
+                <p class="text-gray-600 mb-8">
+                    排盘就是根据出生时间确定八字的四个柱（年柱、月柱、日柱、时柱）。虽然现在有很多软件可以自动排盘，但了解基本步骤有助于理解八字的原理。
+                </p>
+
+                <div class="space-y-6">
+                    <!-- 步骤1 -->
+                    <div class="flex items-start">
+                        <div class="step-number mr-4">1</div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">确定出生时间</h3>
+                            <p class="text-gray-600 mb-3">
+                                首先需要准确的出生时间，包括年、月、日、时。注意八字使用的是农历时间，需要将公历时间转换为农历。
+                            </p>
+                            <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
+                                <p class="text-sm text-blue-800">
+                                    <strong>⚠️ 注意：</strong>出生时间越准确，排盘结果越精确。特别是时辰，相差一小时可能会改变时柱的天干地支。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 步骤2 -->
+                    <div class="flex items-start">
+                        <div class="step-number mr-4">2</div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">查找年柱</h3>
+                            <p class="text-gray-600 mb-3">
+                                根据出生年份确定年柱的天干地支。天干按10年一循环，地支按12年一循环，60年为一个完整周期（甲子轮回）。
+                            </p>
+                            <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded">
+                                <p class="text-sm text-green-800">
+                                    <strong>💡 小技巧：</strong>可以使用在线万年历查找年柱，也可以记住自己生肖对应的地支。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 步骤3 -->
+                    <div class="flex items-start">
+                        <div class="step-number mr-4">3</div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">确定月柱</h3>
+                            <p class="text-gray-600 mb-3">
+                                月柱根据出生月份确定，但不是简单地按公历月份。需要按照二十四节气来确定月份的起始，这是最复杂的一步。
+                            </p>
+                            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+                                <p class="text-sm text-yellow-800">
+                                    <strong>🌱 节气规律：</strong>立春到惊蛰为寅月，惊蛰到清明为卯月，以此类推。每个节气大约15天。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 步骤4 -->
+                    <div class="flex items-start">
+                        <div class="step-number mr-4">4</div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">计算日柱</h3>
+                            <p class="text-gray-600 mb-3">
+                                日柱的天干地支可以通过公式计算，也可以查找万年历。日柱按60天一循环。
+                            </p>
+                            <div class="bg-purple-50 border-l-4 border-purple-400 p-4 rounded">
+                                <p class="text-sm text-purple-800">
+                                    <strong>📅 记忆方法：</strong>记住几个重要的日子，如自己的生日对应的日柱，然后通过加减天数推算其他日期。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 步骤5 -->
+                    <div class="flex items-start">
+                        <div class="step-number mr-4">5</div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">推算时柱</h3>
+                            <p class="text-gray-600 mb-3">
+                                时柱根据出生时间确定，一天分为12个时辰，每个时辰对应一个地支。时柱的天干可以通过日干和时支推算。
+                            </p>
+                            <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded">
+                                <p class="text-sm text-red-800">
+                                    <strong>🕐 时辰对应：</strong>23:00-1:00子时，1:00-3:00丑时，3:00-5:00寅时...以此类推。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 示例 -->
+                <div class="mt-8 p-6 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg border border-orange-200">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                        <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                        简单示例
+                    </h3>
+                    <p class="text-gray-700 mb-3">
+                        假设某人出生于<strong>1990年5月15日下午2:30</strong>：
+                    </p>
+                    <div class="grid md:grid-cols-4 gap-4 text-center">
+                        <div class="bg-white p-4 rounded-lg">
+                            <div class="font-bold text-gray-800">年柱</div>
+                            <div class="text-2xl">庚午</div>
+                            <div class="text-sm text-gray-600">1990年</div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg">
+                            <div class="font-bold text-gray-800">月柱</div>
+                            <div class="text-2xl">辛巳</div>
+                            <div class="text-sm text-gray-600">4月</div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg">
+                            <div class="font-bold text-gray-800">日柱</div>
+                            <div class="text-2xl">丁亥</div>
+                            <div class="text-sm text-gray-600">5月15日</div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg">
+                            <div class="font-bold text-gray-800">时柱</div>
+                            <div class="text-2xl">乙未</div>
+                            <div class="text-sm text-gray-600">未时</div>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-3 text-center">
+                        完整八字：庚午 辛巳 丁亥 乙未
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 学习建议 -->
+        <section class="mb-16 fade-in">
+            <div class="section-card bg-gradient-to-br from-red-50 to-yellow-50">
+                <div class="text-center">
+                    <h2 class="serif-title text-2xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-graduation-cap text-yellow-500 mr-2"></i>
+                        初学者学习建议
+                    </h2>
+
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
+                                <i class="fas fa-book-open text-2xl text-blue-500"></i>
+                            </div>
+                            <h3 class="font-semibold text-gray-800 mb-2">循序渐进</h3>
+                            <p class="text-sm text-gray-600">
+                                先掌握基础概念，再学习分析方法。不要急于求成，打好基础最重要。
+                            </p>
+                        </div>
+
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
+                                <i class="fas fa-users text-2xl text-green-500"></i>
+                            </div>
+                            <h3 class="font-semibold text-gray-800 mb-2">多看实例</h3>
+                            <p class="text-sm text-gray-600">
+                                多分析真实的八字案例，理论结合实践，加深理解。
+                            </p>
+                        </div>
+
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
+                                <i class="fas fa-chart-line text-2xl text-purple-500"></i>
+                            </div>
+                            <h3 class="font-semibold text-gray-800 mb-2">持续学习</h3>
+                            <p class="text-sm text-gray-600">
+                                八字学习是一个长期过程，保持耐心和热情，不断积累经验。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 推荐资源 -->
+        <section class="mb-16 fade-in">
+            <div class="section-card">
+                <div class="text-center mb-8">
+                    <h2 class="serif-title text-2xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-book text-red-500 mr-2"></i>
+                        推荐学习资源
+                    </h2>
+                    <p class="text-gray-600">为初学者推荐一些经典的学习书籍和工具</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="text-center">
+                        <div class="w-20 h-28 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-book text-3xl text-red-500"></i>
+                        </div>
+                        <h3 class="font-semibold text-gray-800 mb-2">基础入门</h3>
+                        <p class="text-sm text-gray-600">
+                            《千里命稿》<br>
+                            《四柱预测学》
+                        </p>
+                    </div>
+
+                    <div class="text-center">
+                        <div class="w-20 h-28 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-laptop text-3xl text-blue-500"></i>
+                        </div>
+                        <h3 class="font-semibold text-gray-800 mb-2">在线工具</h3>
+                        <p class="text-sm text-gray-600">
+                            八字排盘软件<br>
+                            在线学习网站
+                        </p>
+                    </div>
+
+                    <div class="text-center">
+                        <div class="w-20 h-28 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-video text-3xl text-green-500"></i>
+                        </div>
+                        <h3 class="font-semibold text-gray-800 mb-2">视频课程</h3>
+                        <p class="text-sm text-gray-600">
+                            网络教学视频<br>
+                            专业培训课程
+                        </p>
+                    </div>
+
+                    <div class="text-center">
+                        <div class="w-20 h-28 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-users text-3xl text-purple-500"></i>
+                        </div>
+                        <h3 class="font-semibold text-gray-800 mb-2">学习社群</h3>
+                        <p class="text-sm text-gray-600">
+                            学习交流群<br>
+                        专业论坛社区
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-white border-t border-gray-200 py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-600 mb-4">
+                <i class="fas fa-yin-yang text-red-500 mr-2"></i>
+                八字入门基础 - 传承中华传统智慧
+            </p>
+            <p class="text-sm text-gray-500">
+                本站内容仅供学习参考，请理性看待传统文化
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // 添加页面滚动动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.section-card').forEach(el => {
+            observer.observe(el);
+        });
+
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // 手风琴效果（可选功能）
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', function() {
+                const content = this.nextElementSibling;
+                content.classList.toggle('open');
+            });
+        });
+    </script>
+</body>
+</html>

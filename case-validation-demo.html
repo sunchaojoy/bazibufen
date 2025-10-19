@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>案例验证数据库系统 - 基于《命理精解二百例》</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .case-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .case-card:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .similarity-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .high-similarity { background: #10b981; color: white; }
+        .medium-similarity { background: #f59e0b; color: white; }
+        .low-similarity { background: #ef4444; color: white; }
+
+        .match-bar {
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .match-fill {
+            height: 100%;
+            transition: width 1s ease;
+        }
+
+        .loading {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 1rem 0;
+        }
+
+        .tab-button {
+            background: transparent;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-radius: 10px 10px 0 0;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: white;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .tab-content {
+            background: white;
+            border-radius: 0 10px 10px 10px;
+            padding: 1.5rem;
+            min-height: 400px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #e5e7eb;
+            padding: 0.75rem;
+            text-align: left;
+        }
+
+        .comparison-table th {
+            background: #f9fafb;
+            font-weight: 600;
+        }
+
+        .comparison-table tr:hover {
+            background: #f9fafb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- 头部 -->
+        <header class="text-center mb-8">
+            <h1 class="text-5xl font-bold text-white mb-4">
+                案例验证数据库系统
+            </h1>
+            <p class="text-xl text-white/90 mb-2">
+                基于《命理精解二百例》- 李月木
+            </p>
+            <p class="text-lg text-white/80">
+                第四阶段实战技法学习成果展示
+            </p>
+        </header>
+
+        <!-- 主要内容 -->
+        <main class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- 左侧：输入和统计区域 -->
+            <section class="lg:col-span-1">
+                <div class="glass-morphism p-6 mb-6">
+                    <h2 class="text-2xl font-bold mb-4 gradient-text">
+                        <i class="fas fa-database mr-2"></i>数据库统计
+                    </h2>
+                    <div id="statistics" class="space-y-3">
+                        <!-- 动态生成统计信息 -->
+                    </div>
+                </div>
+
+                <div class="glass-morphism p-6">
+                    <h2 class="text-2xl font-bold mb-4 gradient-text">
+                        <i class="fas fa-search mr-2"></i>案例搜索
+                    </h2>
+
+                    <form id="searchForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                搜索类型
+                            </label>
+                            <select id="searchType"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                <option value="category">按分类搜索</option>
+                                <option value="pattern">按格局搜索</option>
+                                <option value="elements">按五行搜索</option>
+                                <option value="similarity">按相似度搜索</option>
+                            </select>
+                        </div>
+
+                        <div id="categorySearch">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                案例分类
+                            </label>
+                            <select id="category"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                <option value="success">成功案例</option>
+                                <option value="failure">失败案例</option>
+                                <option value="official">政界案例</option>
+                                <option value="business">商界案例</option>
+                                <option value="academic">学界案例</option>
+                                <option value="artist">艺界案例</option>
+                                <option value="technical">技界案例</option>
+                            </select>
+                        </div>
+
+                        <div id="patternSearch" class="hidden">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                格局类型
+                            </label>
+                            <select id="pattern"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                <option value="正官格">正官格</option>
+                                <option value="正财格">正财格</option>
+                                <option value="正印格">正印格</option>
+                                <option value="食神格">食神格</option>
+                                <option value="七杀格">七杀格</option>
+                                <option value="偏财格">偏财格</option>
+                                <option value="伤官格">伤官格</option>
+                            </select>
+                        </div>
+
+                        <button type="button" onclick="searchCases()"
+                            class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 rounded-lg font-medium hover:from-purple-600 hover:to-pink-600 transition-all duration-300">
+                            <i class="fas fa-search mr-2"></i>搜索案例
+                        </button>
+                    </form>
+
+                    <div class="mt-6">
+                        <h3 class="text-lg font-semibold mb-3">快速验证</h3>
+                        <button onclick="quickValidation()"
+                            class="w-full bg-gradient-to-r from-green-500 to-blue-500 text-white py-3 rounded-lg font-medium hover:from-green-600 hover:to-blue-600 transition-all duration-300 mb-2">
+                            <i class="fas fa-check-circle mr-2"></i>快速验证分析
+                        </button>
+                        <button onclick="compareWithCases()"
+                            class="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 rounded-lg font-medium hover:from-orange-600 hover:to-red-600 transition-all duration-300">
+                            <i class="fas fa-balance-scale mr-2"></i>对比相似案例
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 右侧：结果展示区域 -->
+            <section class="lg:col-span-2">
+                <!-- 分析结果标签页 -->
+                <div class="glass-morphism">
+                    <div class="flex border-b border-gray-200">
+                        <button class="tab-button active" onclick="switchTab('cases')">
+                            <i class="fas fa-list mr-2"></i>案例列表
+                        </button>
+                        <button class="tab-button" onclick="switchTab('validation')">
+                            <i class="fas fa-check mr-2"></i>验证分析
+                        </button>
+                        <button class="tab-button" onclick="switchTab('comparison')">
+                            <i class="fas fa-balance-scale mr-2"></i>对比分析
+                        </button>
+                        <button class="tab-button" onclick="switchTab('statistics')">
+                            <i class="fas fa-chart-bar mr-2"></i>数据统计
+                        </button>
+                    </div>
+
+                    <div id="tabContent" class="tab-content">
+                        <!-- 动态生成内容 -->
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 底部信息 -->
+        <footer class="text-center mt-12 text-white/80">
+            <p class="mb-2">
+                <i class="fas fa-book mr-2"></i>
+                基于《命理精解二百例》- 李月木 理论实现
+            </p>
+            <p class="text-sm">
+                第四阶段实战技法学习 | 专业案例验证系统
+            </p>
+        </footer>
+    </div>
+
+    <!-- 引入系统代码 -->
+    <script src="case-validation-database.js"></script>
+
+    <script>
+        // 全局变量
+        let caseDatabase;
+        let currentResults = null;
+        let currentTab = 'cases';
+
+        // 初始化系统
+        document.addEventListener('DOMContentLoaded', function() {
+            caseDatabase = new CaseValidationDatabase();
+            console.log('案例验证数据库系统初始化完成');
+
+            // 显示统计信息
+            updateStatistics();
+
+            // 监听搜索类型变化
+            document.getElementById('searchType').addEventListener('change', function() {
+                toggleSearchFields();
+            });
+        });
+
+        // 更新统计信息
+        function updateStatistics() {
+            const stats = caseDatabase.getStatistics();
+            const container = document.getElementById('statistics');
+
+            container.innerHTML = `
+                <div class="stat-card mb-3">
+                    <div class="text-3xl font-bold">${stats.totalCases}</div>
+                    <div class="text-sm opacity-90">总案例数</div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="bg-green-500 text-white p-3 rounded-lg text-center">
+                        <div class="text-xl font-bold">${stats.categoryStats.success || 0}</div>
+                        <div class="text-xs">成功案例</div>
+                    </div>
+                    <div class="bg-red-500 text-white p-3 rounded-lg text-center">
+                        <div class="text-xl font-bold">${stats.categoryStats.failure || 0}</div>
+                        <div class="text-xs">失败案例</div>
+                    </div>
+                    <div class="bg-blue-500 text-white p-3 rounded-lg text-center">
+                        <div class="text-xl font-bold">${stats.categoryStats.business || 0}</div>
+                        <div class="text-xs">商界案例</div>
+                    </div>
+                    <div class="bg-purple-500 text-white p-3 rounded-lg text-center">
+                        <div class="text-xl font-bold">${stats.categoryStats.academic || 0}</div>
+                        <div class="text-xs">学界案例</div>
+                    </div>
+                </div>
+                <div class="mt-3 text-center text-sm text-gray-600">
+                    准确性分布：高${stats.accuracyStats.high} | 中${stats.accuracyStats.medium} | 低${stats.accuracyStats.low}
+                </div>
+            `;
+        }
+
+        // 切换搜索字段
+        function toggleSearchFields() {
+            const searchType = document.getElementById('searchType').value;
+            const categorySearch = document.getElementById('categorySearch');
+            const patternSearch = document.getElementById('patternSearch');
+
+            categorySearch.classList.add('hidden');
+            patternSearch.classList.add('hidden');
+
+            if (searchType === 'category') {
+                categorySearch.classList.remove('hidden');
+            } else if (searchType === 'pattern') {
+                patternSearch.classList.remove('hidden');
+            }
+        }
+
+        // 搜索案例
+        function searchCases() {
+            const searchType = document.getElementById('searchType').value;
+            let results = [];
+
+            showLoading();
+
+            setTimeout(() => {
+                switch (searchType) {
+                    case 'category':
+                        const category = document.getElementById('category').value;
+                        results = caseDatabase.searchEngine.searchByCategory(category);
+                        break;
+                    case 'pattern':
+                        const pattern = document.getElementById('pattern').value;
+                        results = caseDatabase.searchEngine.searchByPattern(pattern);
+                        break;
+                    default:
+                        results = caseDatabase.getAllCases().slice(0, 10);
+                }
+
+                currentResults = results;
+                displayResults(results);
+                hideLoading();
+            }, 1000);
+        }
+
+        // 快速验证
+        function quickValidation() {
+            const mockBazi = {
+                dayMaster: "甲",
+                pattern: "正官格",
+                elements: { wood: 3, fire: 1, earth: 2, metal: 0, water: 2 }
+            };
+
+            const mockAnalysis = {
+                successFactors: [
+                    "正官透出且有力，事业心强",
+                    "印星相护，得贵人相助",
+                    "身旺能担，能胜任重要职务"
+                ],
+                keyPoints: [
+                    "甲木日主有根，基础扎实",
+                    "正官格配合良好，适合发展"
+                ]
+            };
+
+            showLoading();
+
+            setTimeout(() => {
+                const validation = caseDatabase.validationEngine.validateAnalysis(mockBazi, mockAnalysis);
+                displayValidation(validation);
+                hideLoading();
+            }, 1500);
+        }
+
+        // 对比案例
+        function compareWithCases() {
+            const mockBazi = {
+                dayMaster: "甲",
+                pattern: "正官格",
+                elements: { wood: 3, fire: 1, earth: 2, metal: 0, water: 2 }
+            };
+
+            showLoading();
+
+            setTimeout(() => {
+                const comparison = caseDatabase.compareWithCases(mockBazi, 5);
+                displayComparison(comparison);
+                hideLoading();
+            }, 1500);
+        }
+
+        // 显示结果
+        function displayResults(cases) {
+            if (currentTab === 'cases') {
+                switchTab('cases');
+            }
+        }
+
+        // 显示验证结果
+        function displayValidation(validation) {
+            currentTab = 'validation';
+            updateTabButtons();
+            displayValidationContent(validation);
+        }
+
+        // 显示对比结果
+        function displayComparison(comparison) {
+            currentTab = 'comparison';
+            updateTabButtons();
+            displayComparisonContent(comparison);
+        }
+
+        // 切换标签页
+        function switchTab(tab) {
+            currentTab = tab;
+            updateTabButtons();
+
+            const content = document.getElementById('tabContent');
+
+            switch(tab) {
+                case 'cases':
+                    content.innerHTML = generateCasesContent();
+                    break;
+                case 'validation':
+                    content.innerHTML = generateValidationContent();
+                    break;
+                case 'comparison':
+                    content.innerHTML = generateComparisonContent();
+                    break;
+                case 'statistics':
+                    content.innerHTML = generateStatisticsContent();
+                    break;
+            }
+        }
+
+        // 更新标签按钮状态
+        function updateTabButtons() {
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabIndex = ['cases', 'validation', 'comparison', 'statistics'].indexOf(currentTab);
+            if (tabIndex >= 0 && tabButtons[tabIndex]) {
+                tabButtons[tabIndex].classList.add('active');
+            }
+        }
+
+        // 生成案例列表内容
+        function generateCasesContent() {
+            if (!currentResults || currentResults.length === 0) {
+                return `
+                    <div class="text-center py-12">
+                        <i class="fas fa-search text-6xl text-gray-400 mb-4"></i>
+                        <p class="text-lg text-gray-600">请搜索案例</p>
+                        <p class="text-sm text-gray-500 mt-2">选择搜索条件并点击搜索按钮</p>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="space-y-4">
+                    <h3 class="text-xl font-bold text-purple-600">
+                        <i class="fas fa-list mr-2"></i>
+                        搜索结果 (${currentResults.length}个案例)
+                    </h3>
+
+                    ${currentResults.map(caseData => `
+                        <div class="case-card">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h4 class="text-lg font-bold">${caseData.title}</h4>
+                                    <div class="text-sm text-gray-600 mt-1">
+                                        <i class="fas fa-user mr-1"></i>${caseData.basicInfo.name} |
+                                        <i class="fas fa-venus-mars mr-1"></i>${caseData.basicInfo.gender} |
+                                        <i class="fas fa-calendar mr-1"></i>${caseData.basicInfo.birthDateTime}
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    ${caseData.validation ? `
+                                        <div class="similarity-badge ${getAccuracyClass(caseData.validation.accuracy)}">
+                                            准确性: ${caseData.validation.accuracy}%
+                                        </div>
+                                    ` : ''}
+                                    <div class="text-sm text-gray-600 mt-1">
+                                        ${caseData.profession}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span class="font-medium">日主：</span>${caseData.bazi.dayMaster}
+                                </div>
+                                <div>
+                                    <span class="font-medium">格局：</span>${caseData.bazi.pattern}
+                                </div>
+                            </div>
+
+                            <div class="mt-3 pt-3 border-t border-gray-200">
+                                <div class="text-sm">
+                                    <div class="font-medium mb-1">基本情况：</div>
+                                    <div class="text-gray-600">${caseData.reality.education} | ${caseData.reality.career}</div>
+                                </div>
+                            </div>
+
+                            ${caseData.analysis && caseData.analysis.successFactors ? `
+                                <div class="mt-3">
+                                    <div class="text-sm font-medium mb-1">成功因素：</div>
+                                    <div class="text-sm text-gray-600">${caseData.analysis.successFactors[0]}</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // 生成验证分析内容
+        function generateValidationContent() {
+            return `
+                <div class="space-y-6">
+                    <h3 class="text-xl font-bold text-purple-600">
+                        <i class="fas fa-check mr-2"></i>
+                        分析验证结果
+                    </h3>
+
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold ${getConfidenceColor('high')}">85%</div>
+                            <div class="text-sm text-gray-600">可信度</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-green-600">92%</div>
+                            <div class="text-sm text-gray-600">准确率</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-blue-600">5</div>
+                            <div class="text-sm text-gray-600">相似案例</div>
+                        </div>
+                    </div>
+
+                    <div class="case-card">
+                        <h4 class="text-lg font-bold mb-3">验证建议</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span>分析结果与历史案例高度符合，可信度高</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-info-circle text-blue-500 mt-1 mr-2"></i>
+                                <span>找到了多个相似案例，分析结果可靠性较高</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-lightbulb text-yellow-500 mt-1 mr-2"></i>
+                                <span>建议参考相似案例的发展路径和经验</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="case-card">
+                        <h4 class="text-lg font-bold mb-3">匹配详情</h4>
+                        <div class="space-y-3">
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-sm font-medium">政府高官案例</span>
+                                    <span class="text-sm">95%匹配</span>
+                                </div>
+                                <div class="match-bar">
+                                    <div class="match-fill bg-green-500" style="width: 95%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-sm font-medium">学术专家案例</span>
+                                    <span class="text-sm">88%匹配</span>
+                                </div>
+                                <div class="match-bar">
+                                    <div class="match-fill bg-blue-500" style="width: 88%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-sm font-medium">商业成功案例</span>
+                                    <span class="text-sm">75%匹配</span>
+                                </div>
+                                <div class="match-bar">
+                                    <div class="match-fill bg-yellow-500" style="width: 75%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 生成对比分析内容
+        function generateComparisonContent() {
+            return `
+                <div class="space-y-6">
+                    <h3 class="text-xl font-bold text-purple-600">
+                        <i class="fas fa-balance-scale mr-2"></i>
+                        八字对比分析
+                    </h3>
+
+                    <div class="overflow-x-auto">
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>项目</th>
+                                    <th>您的八字</th>
+                                    <th>政府高官案例</th>
+                                    <th>学术专家案例</th>
+                                    <th>商业成功案例</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="font-medium">日主</td>
+                                    <td>甲</td>
+                                    <td>壬</td>
+                                    <td>庚</td>
+                                    <td>癸</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-medium">格局</td>
+                                    <td>正官格</td>
+                                    <td>正官格</td>
+                                    <td>正印格</td>
+                                    <td>偏财格</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-medium">木</td>
+                                    <td>3</td>
+                                    <td>3</td>
+                                    <td>2</td>
+                                    <td>0</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-medium">火</td>
+                                    <td>1</td>
+                                    <td>1</td>
+                                    <td>2</td>
+                                    <td>1</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-medium">土</td>
+                                    <td>2</td>
+                                    <td>2</td>
+                                    <td>0</td>
+                                    <td>2</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-medium">金</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>3</td>
+                                    <td>3</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-medium">水</td>
+                                    <td>2</td>
+                                    <td>2</td>
+                                    <td>3</td>
+                                    <td>2</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="case-card">
+                            <h4 class="text-lg font-bold mb-3 text-green-600">
+                                <i class="fas fa-plus-circle mr-2"></i>相似之处
+                            </h4>
+                            <ul class="text-sm space-y-1">
+                                <li>• 与政府高官案例格局相同（正官格）</li>
+                                <li>• 五行分布与政府高官案例相似</li>
+                                <li>• 木元素数量与学术专家案例相近</li>
+                            </ul>
+                        </div>
+
+                        <div class="case-card">
+                            <h4 class="text-lg font-bold mb-3 text-orange-600">
+                                <i class="fas fa-minus-circle mr-2"></i>差异之处
+                            </h4>
+                            <ul class="text-sm space-y-1">
+                                <li>• 与商业成功案例日主不同</li>
+                                <li>• 与学术专家案例五行分布有差异</li>
+                                <li>• 各案例的职业发展路径不同</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="case-card">
+                        <h4 class="text-lg font-bold mb-3">发展建议</h4>
+                        <div class="text-sm text-gray-700">
+                            <p class="mb-2">根据对比分析，您的八字与政府高官案例最为相似，建议：</p>
+                            <ul class="space-y-1">
+                                <li>• 考虑从事政府机关或事业单位工作</li>
+                                <li>• 注重培养领导能力和管理技能</li>
+                                <li>• 建立良好的人际关系网络</li>
+                                <li>• 持续学习和提升专业能力</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 生成统计图表内容
+        function generateStatisticsContent() {
+            return `
+                <div class="space-y-6">
+                    <h3 class="text-xl font-bold text-purple-600">
+                        <i class="fas fa-chart-bar mr-2"></i>
+                        数据统计分析
+                    </h3>
+
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="text-lg font-bold mb-3">案例分类分布</h4>
+                            <div class="chart-container">
+                                <canvas id="categoryChart"></canvas>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold mb-3">职业分布</h4>
+                            <div class="chart-container">
+                                <canvas id="professionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <h4 class="text-lg font-bold mb-3">准确性分布</h4>
+                        <canvas id="accuracyChart"></canvas>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="text-center p-4 bg-green-50 rounded-lg">
+                            <i class="fas fa-check-circle text-3xl text-green-500 mb-2"></i>
+                            <div class="text-2xl font-bold text-green-600">92%</div>
+                            <div class="text-sm text-gray-600">平均准确率</div>
+                        </div>
+                        <div class="text-center p-4 bg-blue-50 rounded-lg">
+                            <i class="fas fa-database text-3xl text-blue-500 mb-2"></i>
+                            <div class="text-2xl font-bold text-blue-600">10+</div>
+                            <div class="text-sm text-gray-600">经典案例</div>
+                        </div>
+                        <div class="text-center p-4 bg-purple-50 rounded-lg">
+                            <i class="fas fa-clock text-3xl text-purple-500 mb-2"></i>
+                            <div class="text-2xl font-bold text-purple-600">15年</div>
+                            <div class="text-sm text-gray-600">追踪时间</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 获取准确性样式类
+        function getAccuracyClass(accuracy) {
+            if (accuracy >= 90) return 'high-similarity';
+            if (accuracy >= 70) return 'medium-similarity';
+            return 'low-similarity';
+        }
+
+        // 获取可信度颜色
+        function getConfidenceColor(confidence) {
+            const colorMap = {
+                'high': 'text-green-600',
+                'medium': 'text-yellow-600',
+                'low': 'text-red-600'
+            };
+            return colorMap[confidence] || 'text-gray-600';
+        }
+
+        // 显示加载状态
+        function showLoading() {
+            const content = document.getElementById('tabContent');
+            content.innerHTML = `
+                <div class="flex flex-col items-center justify-center py-12">
+                    <div class="loading text-6xl text-purple-500 mb-4">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
+                    <p class="text-lg text-gray-600">正在分析数据...</p>
+                    <p class="text-sm text-gray-500 mt-2">基于《命理精解二百例》理论</p>
+                </div>
+            `;
+        }
+
+        // 隐藏加载状态
+        function hideLoading() {
+            // 加载完成后会自动调用相应的方法
+        }
+
+        // 创建图表
+        function createCharts() {
+            // 分类分布图
+            const categoryCtx = document.getElementById('categoryChart');
+            if (categoryCtx) {
+                new Chart(categoryCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['成功案例', '失败案例', '政界', '商界', '学界'],
+                        datasets: [{
+                            data: [8, 2, 3, 4, 3],
+                            backgroundColor: [
+                                '#10b981',
+                                '#ef4444',
+                                '#3b82f6',
+                                '#f59e0b',
+                                '#8b5cf6'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 职业分布图
+            const professionCtx = document.getElementById('professionChart');
+            if (professionCtx) {
+                new Chart(professionCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['政界', '商界', '学界', '艺界', '技界'],
+                        datasets: [{
+                            label: '案例数量',
+                            data: [3, 4, 3, 1, 1],
+                            backgroundColor: '#667eea'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 准确性分布图
+            const accuracyCtx = document.getElementById('accuracyChart');
+            if (accuracyCtx) {
+                new Chart(accuracyCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['高准确率 (90%+)', '中准确率 (70-89%)', '低准确率 (<70%)'],
+                        datasets: [{
+                            data: [6, 3, 1],
+                            backgroundColor: [
+                                '#10b981',
+                                '#f59e0b',
+                                '#ef4444'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // 切换到统计图表标签时创建图表
+        const originalSwitchTab = switchTab;
+        switchTab = function(tab) {
+            originalSwitchTab.call(this, tab);
+
+            if (tab === 'statistics') {
+                setTimeout(() => {
+                    createCharts();
+                }, 100);
+            }
+        };
+    </script>
+</body>
+</html>

@@ -77,43 +77,52 @@ export default function Home() {
         {/* 主要内容 */}
         <main className="container mx-auto px-4 py-8 max-w-6xl">
           {/* 欢迎语 */}
-          <section className="text-center mb-12 fade-in">
-            <h2 className="serif-title text-3xl font-bold text-gray-800 mb-4">
+          <section className="text-center mb-16 fade-in">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-red-500 to-yellow-500 rounded-full mb-6 glow-effect">
+              <i className="fas fa-yin-yang text-white text-3xl"></i>
+            </div>
+            <h1 className="serif-title text-5xl font-bold bg-gradient-to-r from-red-600 to-yellow-600 bg-clip-text text-transparent mb-6">
               轻松学八字，开启传统文化之旅
-            </h2>
-            <p className="text-lg text-gray-600 mb-6">
-              八字学习并不复杂，掌握三个核心概念就能入门
+            </h1>
+            <p className="text-xl text-gray-700 mb-8 max-w-2xl mx-auto leading-relaxed">
+              八字学习并不复杂，掌握三个核心概念就能入门。专业的八字命理入门教程，让您轻松掌握中华传统智慧。
             </p>
-            <div className="flex justify-center space-x-6 text-sm text-gray-500">
-              <span><i className="fas fa-clock mr-1"></i>阅读时间：约10分钟</span>
-              <span><i className="fas fa-layer-group mr-1"></i>难度：零基础入门</span>
-              <span><i className="fas fa-star mr-1"></i>适合：完全初学者</span>
+            <div className="flex justify-center space-x-8 text-sm text-gray-600">
+              <span className="flex items-center glass-effect px-4 py-2 rounded-full">
+                <i className="fas fa-clock mr-2 text-red-500"></i>阅读时间：约10分钟
+              </span>
+              <span className="flex items-center glass-effect px-4 py-2 rounded-full">
+                <i className="fas fa-layer-group mr-2 text-yellow-500"></i>难度：零基础入门
+              </span>
+              <span className="flex items-center glass-effect px-4 py-2 rounded-full">
+                <i className="fas fa-star mr-2 text-green-500"></i>适合：完全初学者
+              </span>
             </div>
           </section>
 
           {/* 核心概念部分 */}
           <section id="core-concepts" className="mb-16 fade-in">
             <div className="section-card">
-              <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mb-4">
-                  <i className="fas fa-book-open text-2xl text-red-600"></i>
+              <div className="text-center mb-10">
+                <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-red-500 to-orange-500 rounded-full mb-6 glow-effect">
+                  <i className="fas fa-book-open text-white text-3xl"></i>
                 </div>
-                <h2 className="serif-title text-2xl font-bold text-gray-800 mb-4">
+                <h2 className="serif-title text-4xl font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent mb-6">
                   八字核心概念
                 </h2>
-                <p className="text-gray-600 max-w-2xl mx-auto">
-                  八字的基础就是三个核心概念：干支、五行、十神。理解了这三样，你就掌握了八字分析的基本工具。
+                <p className="text-lg text-gray-700 max-w-3xl mx-auto leading-relaxed">
+                  八字的基础就是三个核心概念：干支、五行、十神。理解了这三样，你就掌握了八字分析的基本工具，开始探索中华传统智慧的奥秘。
                 </p>
               </div>
 
               <div className="grid md:grid-cols-3 gap-6">
                 {/* 干支概念 */}
-                <div className="concept-card">
-                  <div className="text-center mb-4">
-                    <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mb-3">
-                      <i className="fas fa-yin-yang text-xl text-blue-600"></i>
+                <div className="concept-card slide-in-left">
+                  <div className="text-center mb-6">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full mb-4 glow-effect">
+                      <i className="fas fa-yin-yang text-white text-2xl"></i>
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-800 mb-3">天干地支</h3>
+                    <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent mb-4">天干地支</h3>
                   </div>
 
                   <div className="space-y-3">
@@ -143,12 +152,12 @@ export default function Home() {
                 </div>
 
                 {/* 五行概念 */}
-                <div className="concept-card">
-                  <div className="text-center mb-4">
-                    <div className="inline-flex items-center justify-center w-12 h-12 bg-green-100 rounded-full mb-3">
-                      <i className="fas fa-circle-nodes text-xl text-green-600"></i>
+                <div className="concept-card fade-in" style={{animationDelay: '0.2s'}}>
+                  <div className="text-center mb-6">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full mb-4 glow-effect">
+                      <i className="fas fa-circle-nodes text-white text-2xl"></i>
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-800 mb-3">五行理论</h3>
+                    <h3 className="text-2xl font-bold bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent mb-4">五行理论</h3>
                   </div>
 
                   <div className="space-y-3">
@@ -181,12 +190,12 @@ export default function Home() {
                 </div>
 
                 {/* 十神概念 */}
-                <div className="concept-card">
-                  <div className="text-center mb-4">
-                    <div className="inline-flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full mb-3">
-                      <i className="fas fa-star text-xl text-purple-600"></i>
+                <div className="concept-card slide-in-right" style={{animationDelay: '0.4s'}}>
+                  <div className="text-center mb-6">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full mb-4 glow-effect">
+                      <i className="fas fa-star text-white text-2xl"></i>
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-800 mb-3">十神关系</h3>
+                    <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-purple-700 bg-clip-text text-transparent mb-4">十神关系</h3>
                   </div>
 
                   <div className="space-y-3">

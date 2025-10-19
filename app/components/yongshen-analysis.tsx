@@ -76,7 +76,7 @@ export default function YongShenAnalysis({ bazi, strengthLevel, onYongShenSelect
     const monthWuxing = getWuxing(monthZhi)
     const season = getSeason(monthZhi)
 
-    let tiaoHouNeeds = []
+    let tiaoHouNeeds: string[] = []
     let recommendedYongShen: string[] = []
 
     // 《穷通宝鉴》调候用神总诀
@@ -276,7 +276,7 @@ export default function YongShenAnalysis({ bazi, strengthLevel, onYongShenSelect
 
     // 用神优先级：调候 > 扶抑 > 通关 > 病药
     let mainYongShen: any[] = []
-    let explanation = []
+    let explanation: string[] = []
 
     // 首选调候用神
     if (tiaoHou.recommended && tiaoHou.recommended.length > 0) {
@@ -379,8 +379,8 @@ export default function YongShenAnalysis({ bazi, strengthLevel, onYongShenSelect
   }
 
   function findWuxingConflicts(count: { [key: string]: number }): string[][] {
-    const conflicts = []
-    const conflictPairs = [
+    const conflicts: string[][] = []
+    const conflictPairs: string[][] = [
       ['木', '土'], ['土', '水'], ['水', '火'], ['火', '金'], ['金', '木']
     ]
 
@@ -402,7 +402,7 @@ export default function YongShenAnalysis({ bazi, strengthLevel, onYongShenSelect
   }
 
   function identifyProblems(count: { [key: string]: number }): string[] {
-    const problems = []
+    const problems: string[] = []
     Object.entries(count).forEach(([wuxing, num]) => {
       if (num === 0) {
         problems.push(`${wuxing}行缺失`)
@@ -414,7 +414,7 @@ export default function YongShenAnalysis({ bazi, strengthLevel, onYongShenSelect
   }
 
   function findSolutions(problems: string[]): string[] {
-    const solutions = []
+    const solutions: string[] = []
     problems.forEach(problem => {
       if (problem.includes('缺失')) {
         const wuxing = problem.replace('行缺失', '')

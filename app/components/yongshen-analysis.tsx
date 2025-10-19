@@ -431,7 +431,7 @@ export default function YongShenAnalysis({ bazi, strengthLevel, onYongShenSelect
     const step = analysisSteps[stepIndex]
     const result = step.method()
 
-    setYongshenResults(prev => ({
+    setYongshenResults((prev: any) => ({
       ...prev,
       [stepIndex]: result
     }))

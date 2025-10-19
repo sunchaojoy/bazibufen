@@ -25,9 +25,9 @@ export default function Home() {
 
     // 平滑滚动到锚点
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
+      anchor.addEventListener('click', (e) => {
         e.preventDefault()
-        const target = document.querySelector(this.getAttribute('href'))
+        const target = document.querySelector((e.currentTarget as HTMLAnchorElement).getAttribute('href') || '')
         if (target) {
           target.scrollIntoView({
             behavior: 'smooth',
@@ -39,11 +39,11 @@ export default function Home() {
 
     // 添加简单的交互效果
     document.querySelectorAll('.concept-card, .pillar-box').forEach(card => {
-      card.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-2px)'
+      card.addEventListener('mouseenter', (e) => {
+        ;(e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)'
       })
-      card.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0)'
+      card.addEventListener('mouseleave', (e) => {
+        ;(e.currentTarget as HTMLElement).style.transform = 'translateY(0)'
       })
     })
 

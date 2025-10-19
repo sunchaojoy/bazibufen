@@ -1,6 +1,5 @@
 'use client'
 
-import Head from 'next/head'
 import { useEffect } from 'react'
 
 export default function Home() {
@@ -53,14 +52,7 @@ export default function Home() {
   }, [])
 
   return (
-    <>
-      <Head>
-        <title>零基础八字入门 - 轻松学八字</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-      </Head>
-
-      <div className="nav-scroll">
+    <div className="nav-scroll">
         {/* 头部 */}
         <header className="bg-white shadow-sm sticky top-0 z-50">
           <div className="container mx-auto px-4 py-4">
@@ -834,149 +826,5 @@ export default function Home() {
           </div>
         </footer>
       </div>
-
-      <style jsx>{`
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
-
-        :root {
-          --primary-red: #dc2626;
-          --primary-gold: #f59e0b;
-          --bg-cream: #fefce8;
-          --bg-light: #fff7ed;
-          --text-primary: #1f2937;
-          --text-secondary: #4b5563;
-          --border-light: #fed7aa;
-        }
-
-        body {
-          font-family: 'Noto Sans SC', sans-serif;
-          background: linear-gradient(135deg, #fefce8 0%, #fff7ed 100%);
-          min-height: 100vh;
-        }
-
-        .serif-title {
-          font-family: 'Noto Serif SC', serif;
-        }
-
-        .section-card {
-          background: white;
-          border-radius: 16px;
-          padding: 2rem;
-          margin-bottom: 2rem;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-          transition: all 0.3s ease;
-        }
-
-        .section-card:hover {
-          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-          transform: translateY(-2px);
-        }
-
-        .element-badge {
-          display: inline-block;
-          padding: 0.25rem 0.75rem;
-          border-radius: 20px;
-          font-size: 0.875rem;
-          font-weight: 500;
-          margin: 0.25rem;
-        }
-
-        .wood { background: #dcfce7; color: #15803d; }
-        .fire { background: #fee2e2; color: #dc2626; }
-        .earth { background: #fef3c7; color: #d97706; }
-        .metal { background: #f3f4f6; color: #4b5563; }
-        .water { background: #dbeafe; color: #2563eb; }
-
-        .step-number {
-          width: 36px;
-          height: 36px;
-          background: var(--primary-red);
-          color: white;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: bold;
-          font-size: 1rem;
-          flex-shrink: 0;
-        }
-
-        .table-custom {
-          width: 100%;
-          border-collapse: separate;
-          border-spacing: 0;
-          border-radius: 12px;
-          overflow: hidden;
-          margin: 1rem 0;
-        }
-
-        .table-custom th {
-          background: var(--bg-light);
-          color: var(--text-primary);
-          font-weight: 600;
-          padding: 1rem;
-          text-align: center;
-        }
-
-        .table-custom td {
-          padding: 0.75rem 1rem;
-          text-align: center;
-          border-top: 1px solid var(--border-light);
-        }
-
-        .table-custom tr:hover td {
-          background: var(--bg-cream);
-        }
-
-        .concept-card {
-          background: white;
-          border: 2px solid var(--border-light);
-          border-radius: 12px;
-          padding: 1.5rem;
-          transition: all 0.3s ease;
-          height: 100%;
-        }
-
-        .concept-card:hover {
-          border-color: var(--primary-gold);
-          box-shadow: 0 8px 12px -2px rgba(0, 0, 0, 0.1);
-        }
-
-        .pillar-box {
-          background: linear-gradient(135deg, #fff7ed 0%, #fefce8 100%);
-          border: 2px solid var(--border-light);
-          border-radius: 12px;
-          padding: 1rem;
-          text-align: center;
-          transition: all 0.3s ease;
-        }
-
-        .pillar-box:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 12px -2px rgba(0, 0, 0, 0.1);
-        }
-
-        .highlight-box {
-          background: linear-gradient(135deg, #fef3c7 0%, #fee2e2 100%);
-          border-left: 4px solid var(--primary-red);
-          border-radius: 8px;
-          padding: 1rem;
-          margin: 1rem 0;
-        }
-
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-
-        .fade-in {
-          animation: fadeIn 0.6s ease forwards;
-        }
-
-        .nav-scroll {
-          scroll-behavior: smooth;
-        }
-      `}</style>
-    </>
   )
 }

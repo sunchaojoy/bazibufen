@@ -1,9 +1,18 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function Home() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [showBackToTop, setShowBackToTop] = useState(false)
+
   useEffect(() => {
+    // 监听滚动显示返回顶部按钮
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 300)
+    }
+    window.addEventListener('scroll', handleScroll)
+
     // 添加页面滚动动画
     const observerOptions = {
       threshold: 0.1,
@@ -48,8 +57,16 @@ export default function Home() {
 
     return () => {
       observer.disconnect()
+      window.removeEventListener('scroll', handleScroll)
     }
   }, [])
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
 
   return (
     <div className="nav-scroll">
@@ -58,21 +75,73 @@ export default function Home() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-red-600 to-yellow-500 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-500 rounded-lg flex items-center justify-center">
                 <i className="fas fa-yin-yang text-white text-xl"></i>
               </div>
               <h1 className="serif-title text-2xl md:text-3xl font-bold text-gray-800">
-                零基础八字入门
+                晨煦的学习小屋
               </h1>
             </div>
             <nav className="hidden md:flex space-x-6">
-              <a href="#core-concepts" className="text-gray-600 hover:text-red-600 transition-colors">核心概念</a>
-              <a href="#steps" className="text-gray-600 hover:text-red-600 transition-colors">排盘步骤</a>
-              <a href="#dayun-liunian" className="text-gray-600 hover:text-red-600 transition-colors">大运流年</a>
+              <a href="#core-concepts" className="text-gray-600 hover:text-pink-500 transition-colors">核心概念</a>
+              <a href="#steps" className="text-gray-600 hover:text-purple-500 transition-colors">排盘步骤</a>
+              <a href="#dayun-liunian" className="text-gray-600 hover:text-pink-500 transition-colors">大运流年</a>
+              <a href="/bazi-advanced-analysis" className="text-gray-600 hover:text-purple-600 transition-colors font-semibold">实战解读</a>
+              <a href="/bazi-calculator" className="text-gray-600 hover:text-pink-500 transition-colors">排盘计算</a>
             </nav>
+            <button
+              className="mobile-menu-btn md:hidden"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle mobile menu"
+            >
+              <i className={`fas ${mobileMenuOpen ? 'fa-times' : 'fa-bars'}`}></i>
+            </button>
           </div>
         </div>
       </header>
+
+      {/* 移动端菜单 */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-white border-t border-gray-200 shadow-lg">
+          <div className="container mx-auto px-4 py-4">
+            <nav className="flex flex-col space-y-3">
+              <a
+                href="#core-concepts"
+                className="text-gray-600 hover:text-pink-500 transition-colors py-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                核心概念
+              </a>
+              <a
+                href="#steps"
+                className="text-gray-600 hover:text-purple-500 transition-colors py-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                排盘步骤
+              </a>
+              <a
+                href="#dayun-liunian"
+                className="text-gray-600 hover:text-pink-500 transition-colors py-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                大运流年
+              </a>
+              <a
+                href="/bazi-advanced-analysis"
+                className="text-gray-600 hover:text-purple-600 transition-colors font-semibold py-2"
+              >
+                实战解读
+              </a>
+              <a
+                href="/bazi-calculator"
+                className="text-gray-600 hover:text-pink-500 transition-colors py-2"
+              >
+                排盘计算
+              </a>
+            </nav>
+          </div>
+        </div>
+      )}
 
       {/* 主要内容 */}
       <main className="container mx-auto px-4 py-8 max-w-6xl">
@@ -82,7 +151,7 @@ export default function Home() {
             轻松学八字，开启传统文化之旅
           </h2>
           <p className="text-lg text-gray-600 mb-6">
-            八字学习并不复杂，掌握三个核心概念就能入门
+            欢迎来到晨煦的学习小屋，在这里一起探索八字文化的奥秘
           </p>
           <div className="flex justify-center space-x-6 text-sm text-gray-500">
             <span><i className="fas fa-clock mr-1"></i>阅读时间：约10分钟</span>
@@ -95,8 +164,8 @@ export default function Home() {
         <section id="core-concepts" className="mb-16 fade-in">
           <div className="section-card">
             <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mb-4">
-                <i className="fas fa-book-open text-2xl text-red-600"></i>
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-pink-100 rounded-full mb-4">
+                <i className="fas fa-book-open text-2xl text-pink-600"></i>
               </div>
               <h2 className="serif-title text-2xl font-bold text-gray-800 mb-4">
                 八字核心概念
@@ -380,8 +449,8 @@ export default function Home() {
         <section id="steps" className="mb-16 fade-in">
           <div className="section-card">
             <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-orange-100 rounded-full mb-4">
-                <i className="fas fa-list-ol text-2xl text-orange-600"></i>
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
+                <i className="fas fa-list-ol text-2xl text-purple-600"></i>
               </div>
               <h2 className="serif-title text-2xl font-bold text-gray-800 mb-4">
                 八字排盘步骤
@@ -506,43 +575,41 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 完整示例 */}
+            {/* 学习提示 */}
             <div className="mt-8 p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg">
               <h3 className="text-lg font-semibold text-gray-800 mb-4">
                 <i className="fas fa-lightbulb text-yellow-500 mr-2"></i>
-                完整示例演示
+                学习提示
               </h3>
               <p className="text-gray-700 mb-4">
-                假设某人出生于<strong>1995年8月15日上午10:30</strong>：
+                排盘虽然看起来复杂，但有了现代工具的帮助，整个过程已经变得非常简单。
               </p>
 
-              <div className="grid md:grid-cols-4 gap-4 mb-4">
-                <div className="text-center p-3 bg-white rounded-lg">
-                  <div className="font-bold text-gray-800">年柱</div>
-                  <div className="text-2xl font-bold text-red-600">乙亥</div>
-                  <div className="text-xs text-gray-600">1995年属猪</div>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="p-4 bg-white rounded-lg">
+                  <h4 className="font-semibold text-gray-700 mb-2">
+                    <i className="fas fa-laptop text-blue-500 mr-2"></i>
+                    现代方法
+                  </h4>
+                  <p className="text-sm text-gray-600">
+                    使用排盘软件或在线工具，输入出生年月日时，立即得到准确的八字结果。
+                  </p>
                 </div>
-                <div className="text-center p-3 bg-white rounded-lg">
-                  <div className="font-bold text-gray-800">月柱</div>
-                  <div className="text-2xl font-bold text-orange-600">甲申</div>
-                  <div className="text-xs text-gray-600">8月立秋后</div>
-                </div>
-                <div className="text-center p-3 bg-white rounded-lg">
-                  <div className="font-bold text-gray-800">日柱</div>
-                  <div className="text-2xl font-bold text-green-600">丁丑</div>
-                  <div className="text-xs text-gray-600">日主为丁火</div>
-                </div>
-                <div className="text-center p-3 bg-white rounded-lg">
-                  <div className="font-bold text-gray-800">时柱</div>
-                  <div className="text-2xl font-bold text-blue-600">乙巳</div>
-                  <div className="text-xs text-gray-600">上午巳时</div>
+                <div className="p-4 bg-white rounded-lg">
+                  <h4 className="font-semibold text-gray-700 mb-2">
+                    <i className="fas fa-book text-purple-500 mr-2"></i>
+                    传统学习
+                  </h4>
+                  <p className="text-sm text-gray-600">
+                    了解基本原理有助于更好地理解八字的含义和分析方法。
+                  </p>
                 </div>
               </div>
 
-              <div className="text-center p-4 bg-white rounded-lg">
-                <div className="font-bold text-gray-700 mb-2">完整八字：</div>
-                <div className="text-2xl font-bold text-gray-800">乙亥 甲申 丁丑 乙巳</div>
-                <div className="text-sm text-gray-600 mt-2">日主丁火，生于秋季，需要木火帮扶</div>
+              <div className="mt-4 p-4 bg-yellow-50 rounded-lg">
+                <p className="text-sm text-yellow-800">
+                  <strong>💡 建议：</strong>初学者可以使用我们的<a href="/bazi-calculator" className="text-blue-600 hover:underline">八字计算器</a>来快速排盘，然后专注于学习如何解读八字。
+                </p>
               </div>
             </div>
           </div>
@@ -552,8 +619,8 @@ export default function Home() {
         <section id="dayun-liunian" className="mb-16 fade-in">
           <div className="section-card">
             <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
-                <i className="fas fa-chart-line text-2xl text-purple-600"></i>
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-pink-100 rounded-full mb-4">
+                <i className="fas fa-chart-line text-2xl text-pink-600"></i>
               </div>
               <h2 className="serif-title text-2xl font-bold text-gray-800 mb-4">
                 大运与流年简介
@@ -733,99 +800,33 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 总结部分 */}
-        <section className="mb-16 fade-in">
-          <div className="section-card bg-gradient-to-br from-red-50 to-yellow-50">
-            <div className="text-center">
-              <h2 className="serif-title text-2xl font-bold text-gray-800 mb-6">
-                <i className="fas fa-flag-checkered text-yellow-500 mr-2"></i>
-                学习总结
-              </h2>
-
-              <div className="max-w-3xl mx-auto">
-                <p className="text-gray-700 mb-6 text-lg">
-                  恭喜你！通过今天的学习，你已经掌握了八字入门的三个核心概念：
-                </p>
-
-                <div className="grid md:grid-cols-3 gap-6 mb-8">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
-                      <i className="fas fa-yin-yang text-2xl text-blue-500"></i>
-                    </div>
-                    <h3 className="font-semibold text-gray-800 mb-2">干支系统</h3>
-                    <p className="text-sm text-gray-600">了解天干地支的基本含义和对应关系</p>
-                  </div>
-
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
-                      <i className="fas fa-circle-nodes text-2xl text-green-500"></i>
-                    </div>
-                    <h3 className="font-semibold text-gray-800 mb-2">五行理论</h3>
-                    <p className="text-sm text-gray-600">掌握五行的特征和相生相克关系</p>
-                  </div>
-
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
-                      <i className="fas fa-star text-2xl text-purple-500"></i>
-                    </div>
-                    <h3 className="font-semibold text-gray-800 mb-2">十神关系</h3>
-                    <p className="text-sm text-gray-600">理解基本的十神含义和作用</p>
-                  </div>
-                </div>
-
-                <div className="p-6 bg-white rounded-lg">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">下一步学习建议</h3>
-                  <div className="grid md:grid-cols-2 gap-4 text-left">
-                    <div>
-                      <h4 className="font-medium text-gray-700 mb-2">📚 理论学习</h4>
-                      <ul className="text-sm text-gray-600 space-y-1">
-                        <li>• 深入学习五行生克制化</li>
-                        <li>• 掌握十神的详细含义</li>
-                        <li>• 了解神煞和特殊格局</li>
-                      </ul>
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-gray-700 mb-2">🎯 实践应用</h4>
-                      <ul className="text-sm text-gray-600 space-y-1">
-                        <li>• 用软件排自己的八字</li>
-                        <li>• 分析家人朋友的八字</li>
-                        <li>• 参加学习交流群讨论</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-6 text-center">
-                  <p className="text-gray-600 mb-4">
-                    <i className="fas fa-quote-left text-yellow-500 mr-2"></i>
-                    八字学习是一个循序渐进的过程，保持好奇心和耐心
-                    <i className="fas fa-quote-right text-yellow-500 ml-2"></i>
-                  </p>
-                  <div className="inline-flex items-center space-x-4 text-sm text-gray-500">
-                    <span><i className="fas fa-clock mr-1"></i>持续学习</span>
-                    <span><i className="fas fa-heart mr-1"></i>热爱传统文化</span>
-                    <span><i className="fas fa-star mr-1"></i>理性看待命理</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
+  
+    
       </main>
 
       {/* 页脚 */}
       <footer className="bg-white border-t border-gray-200 py-8">
         <div className="container mx-auto px-4 text-center">
           <p className="text-gray-600 mb-4">
-            <i className="fas fa-yin-yang text-red-500 mr-2"></i>
-            零基础八字入门 - 传承中华传统智慧
+            <i className="fas fa-yin-yang text-pink-500 mr-2"></i>
+            晨煦的学习小屋
           </p>
           <p className="text-sm text-gray-500">
             本站内容仅供学习参考，请理性看待传统文化
           </p>
         </div>
       </footer>
+
+      {/* 返回顶部按钮 */}
+      {showBackToTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-500 text-white rounded-full shadow-lg hover:from-pink-600 hover:to-purple-600 transition-all duration-300 transform hover:scale-110 flex items-center justify-center z-40"
+          aria-label="返回顶部"
+        >
+          <i className="fas fa-arrow-up"></i>
+        </button>
+      )}
     </div>
   )
 }

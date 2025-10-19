@@ -144,7 +144,7 @@ export default function StrengthAnalysis({ bazi, onStrengthDetermined }: Strengt
     const dayMaster = bazi.day.gan
     const dayMasterWuxing = getWuxing(dayMaster)
     let totalScore = 0
-    let details = []
+    let details: any[] = []
 
     // 分析年支
     const yearZhiAnalysis = analyzeDiZhiSupport(bazi.year.zhi, dayMasterWuxing, '年支')
@@ -226,7 +226,7 @@ export default function StrengthAnalysis({ bazi, onStrengthDetermined }: Strengt
     let tongDangCount = 0
     let shengZhuCount = 0
     let keZhiCount = 0
-    let details = []
+    let details: any[] = []
 
     tianGans.forEach((gan, index) => {
       const position = ['年干', '月干', '日干', '时干'][index]
@@ -260,7 +260,7 @@ export default function StrengthAnalysis({ bazi, onStrengthDetermined }: Strengt
     const dayMaster = bazi.day.gan
     const dayMasterWuxing = getWuxing(dayMaster)
     let totalScore = 0
-    let factors = []
+    let factors: any[] = []
 
     // 分析所有克制因素
     const allElements = [
@@ -299,7 +299,7 @@ export default function StrengthAnalysis({ bazi, onStrengthDetermined }: Strengt
 
   function comprehensiveEvaluation(results: any) {
     let totalScore = 0
-    let evaluation = []
+    let evaluation: any[] = []
 
     // 汇总各项得分
     Object.values(results).forEach((result: any) => {
@@ -479,7 +479,7 @@ export default function StrengthAnalysis({ bazi, onStrengthDetermined }: Strengt
     const step = analysisSteps[stepIndex]
     const result = step.method()
 
-    setDetailedResults(prev => ({
+    setDetailedResults((prev: any) => ({
       ...prev,
       [stepIndex]: result
     }))
@@ -489,7 +489,7 @@ export default function StrengthAnalysis({ bazi, onStrengthDetermined }: Strengt
     } else {
       // 执行综合评估
       const evaluation = comprehensiveEvaluation(detailedResults)
-      setDetailedResults(prev => ({
+      setDetailedResults((prev: any) => ({
         ...prev,
         evaluation
       }))

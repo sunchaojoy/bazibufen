@@ -152,7 +152,7 @@ export default function PatternAnalysis({ bazi, onPatternDetermined }: PatternAn
     const totalRestraint = keWuxingCount + (8 - totalSupport)
 
     let congeType = ''
-    let congeConditions = []
+    let congeConditions: string[] = []
     let canConge = false
 
     if (totalSupport <= 2 && totalRestraint >= 6) {
@@ -263,7 +263,15 @@ export default function PatternAnalysis({ bazi, onPatternDetermined }: PatternAn
     const bianceGe = previousResults[1]
     const teShuGe = previousResults[2]
 
-    let evaluation = {
+    let evaluation: {
+      patternType: string
+      patternName: string
+      successLevel: string
+      successReason: string
+      failureReason: string
+      improvement: string[]
+      score: number
+    } = {
       patternType: '',
       patternName: '',
       successLevel: '中等',
@@ -319,7 +327,14 @@ export default function PatternAnalysis({ bazi, onPatternDetermined }: PatternAn
     const dayMaster = bazi.day.gan
     const dayMasterWuxing = getWuxing(dayMaster)
 
-    let levelAnalysis = {
+    let levelAnalysis: {
+      currentLevel: string
+      levelScore: number
+      characteristics: string[]
+      potential: string[]
+      advice: string[]
+      developmentDirection: string[]
+    } = {
       currentLevel: '',
       levelScore: 0,
       characteristics: [],
@@ -542,7 +557,7 @@ export default function PatternAnalysis({ bazi, onPatternDetermined }: PatternAn
     const step = analysisSteps[stepIndex]
     const result = step.method()
 
-    setPatternResults(prev => ({
+    setPatternResults((prev: any) => ({
       ...prev,
       [stepIndex]: result
     }))

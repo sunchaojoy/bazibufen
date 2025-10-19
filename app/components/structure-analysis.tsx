@@ -251,7 +251,11 @@ export default function StructureAnalysis({ bazi, onAnalysisComplete }: Structur
 
     // 分析五行平衡状况
     const total = Object.values(wuxingCount).reduce((sum, count) => sum + count, 0)
-    const balance = {
+    const balance: {
+      status: string
+      description: string
+      advice: string[]
+    } = {
       status: '相对平衡',
       description: '',
       advice: []
@@ -328,7 +332,7 @@ export default function StructureAnalysis({ bazi, onAnalysisComplete }: Structur
 
   function analyzeDiZhiRelations(bazi: BaziData) {
     const diZhies = [bazi.year.zhi, bazi.month.zhi, bazi.day.zhi, bazi.hour.zhi]
-    const relations = []
+    const relations: any[] = []
 
     // 检查六合
     const liuhePairs = [
@@ -391,7 +395,13 @@ export default function StructureAnalysis({ bazi, onAnalysisComplete }: Structur
 
   function evaluateStructureLevel(bazi: BaziData) {
     // 综合评估命局层次
-    const evaluation = {
+    const evaluation: {
+      level: string
+      score: number
+      characteristics: string[]
+      potential: string[]
+      suggestions: string[]
+    } = {
       level: '中等',
       score: 75,
       characteristics: [],
@@ -546,15 +556,11 @@ export default function StructureAnalysis({ bazi, onAnalysisComplete }: Structur
     return `${dominant}元素较为旺盛，${weak}元素相对不足，需要平衡调理`
   }
 
-  function summarizeKeyShiShen(keyShiShen: any[]): string {
-    return '关键十神组合对性格和命运有重要影响'
-  }
-
   const executeStep = (stepIndex: number) => {
     const step = analysisSteps[stepIndex]
     const result = step.content()
 
-    setAnalysisResults(prev => ({
+    setAnalysisResults((prev: any) => ({
       ...prev,
       [stepIndex]: result
     }))

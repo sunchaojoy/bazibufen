@@ -77,7 +77,7 @@ export default function YongShenAnalysis({ bazi, strengthLevel, onYongShenSelect
     const season = getSeason(monthZhi)
 
     let tiaoHouNeeds = []
-    let recommendedYongShen = []
+    let recommendedYongShen: string[] = []
 
     // 《穷通宝鉴》调候用神总诀
     const tiaoHouRules = {
@@ -170,7 +170,7 @@ export default function YongShenAnalysis({ bazi, strengthLevel, onYongShenSelect
     const dayMaster = bazi.day.gan
     const dayMasterWuxing = getWuxing(dayMaster)
     let fuYiDirection = ''
-    let recommendedYongShen = []
+    let recommendedYongShen: string[] = []
     let analysis = ''
 
     if (['强', '极强'].includes(strengthLevel)) {
@@ -224,7 +224,7 @@ export default function YongShenAnalysis({ bazi, strengthLevel, onYongShenSelect
 
     const wuxingCount = countWuxing(allElements)
     const conflicts = findWuxingConflicts(wuxingCount)
-    let tongGuanYongShen = []
+    let tongGuanYongShen: any[] = []
 
     conflicts.forEach(conflict => {
       const [wuxing1, wuxing2] = conflict
@@ -275,7 +275,7 @@ export default function YongShenAnalysis({ bazi, strengthLevel, onYongShenSelect
     const bingYao = results[3] || { solutions: [] }
 
     // 用神优先级：调候 > 扶抑 > 通关 > 病药
-    let mainYongShen = []
+    let mainYongShen: any[] = []
     let explanation = []
 
     // 首选调候用神

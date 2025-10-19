@@ -558,7 +558,7 @@ export class BaziAnalysisEngine {
   }
 
   private countWuxing(elements: string[]): { [key: string]: number } {
-    const count = { '木': 0, '火': 0, '土': 0, '金': 0, '水': 0 }
+    const count: { [key: string]: number } = { '木': 0, '火': 0, '土': 0, '金': 0, '水': 0 }
     elements.forEach(element => {
       const wuxing = this.wuxingMap[element as keyof typeof this.wuxingMap]
       if (wuxing) count[wuxing]++

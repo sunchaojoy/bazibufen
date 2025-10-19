@@ -83,25 +83,25 @@ export function calculateShiShen(riZhu: string, tianGan: string): ShiShenResult 
     shiShenName = shiShenType === '偏' ? '比肩' : '劫财';
     relation = '同类';
     description = `与日主同为${riZhuWuxing}，阴阳${shiShenType === '偏' ? '相同' : '相异'}`;
-  } else if (wuxingShengKe.sheng[riZhuWuxing] === ganWuxing) {
+  } else if (wuxingShengKe.sheng[riZhuWuxing as keyof typeof wuxingShengKe.sheng] === ganWuxing) {
     // 日主生天干
     shiShenType = ganYinYang === riZhuYinYang ? '偏' : '正';
     shiShenName = shiShenType === '偏' ? '食神' : '伤官';
     relation = '我生';
     description = `日主${riZhuWuxing}生${ganWuxing}，阴阳${shiShenType === '偏' ? '相同' : '相异'}`;
-  } else if (wuxingShengKe.sheng[ganWuxing] === riZhuWuxing) {
+  } else if (wuxingShengKe.sheng[ganWuxing as keyof typeof wuxingShengKe.sheng] === riZhuWuxing) {
     // 天干生日主
     shiShenType = ganYinYang === riZhuYinYang ? '偏' : '正';
     shiShenName = shiShenType === '偏' ? '偏印' : '正印';
     relation = '生我';
     description = `${ganWuxing}生日主${riZhuWuxing}，阴阳${shiShenType === '偏' ? '相同' : '相异'}`;
-  } else if (wuxingShengKe.ke[riZhuWuxing] === ganWuxing) {
+  } else if (wuxingShengKe.ke[riZhuWuxing as keyof typeof wuxingShengKe.ke] === ganWuxing) {
     // 日主克天干
     shiShenType = ganYinYang === riZhuYinYang ? '偏' : '正';
     shiShenName = shiShenType === '偏' ? '偏财' : '正财';
     relation = '我克';
     description = `日主${riZhuWuxing}克${ganWuxing}，阴阳${shiShenType === '偏' ? '相同' : '相异'}`;
-  } else if (wuxingShengKe.ke[ganWuxing] === riZhuWuxing) {
+  } else if (wuxingShengKe.ke[ganWuxing as keyof typeof wuxingShengKe.ke] === riZhuWuxing) {
     // 天干克日主
     shiShenType = ganYinYang === riZhuYinYang ? '偏' : '正';
     shiShenName = shiShenType === '偏' ? '七杀' : '正官';
@@ -277,13 +277,13 @@ export function judgeShenQiang(baZi: BaZiInfo): {
     const ganInfo = tianGanInfo[gan as keyof typeof tianGanInfo];
     if (ganInfo.wuxing === dayMasterWuxing) {
       score += 2; // 比劫帮扶
-    } else if (wuxingShengKe.sheng[ganInfo.wuxing] === dayMasterWuxing) {
+    } else if (wuxingShengKe.sheng[ganInfo.wuxing as keyof typeof wuxingShengKe.sheng] === dayMasterWuxing) {
       score += 3; // 印星生扶
-    } else if (wuxingShengKe.ke[ganInfo.wuxing] === dayMasterWuxing) {
+    } else if (wuxingShengKe.ke[ganInfo.wuxing as keyof typeof wuxingShengKe.ke] === dayMasterWuxing) {
       score -= 2; // 官杀克制
-    } else if (wuxingShengKe.ke[dayMasterWuxing] === ganInfo.wuxing) {
+    } else if (wuxingShengKe.ke[dayMasterWuxing as keyof typeof wuxingShengKe.ke] === ganInfo.wuxing) {
       score -= 1; // 财星耗泄
-    } else if (wuxingShengKe.sheng[dayMasterWuxing] === ganInfo.wuxing) {
+    } else if (wuxingShengKe.sheng[dayMasterWuxing as keyof typeof wuxingShengKe.sheng] === ganInfo.wuxing) {
       score -= 1; // 食伤泄气
     }
   });
@@ -294,9 +294,9 @@ export function judgeShenQiang(baZi: BaZiInfo): {
   const monthZhiWuxing = getZhiWuxing(monthZhi);
   if (monthZhiWuxing === dayMasterWuxing) {
     score += 3; // 得令
-  } else if (wuxingShengKe.sheng[monthZhiWuxing] === dayMasterWuxing) {
+  } else if (wuxingShengKe.sheng[monthZhiWuxing as keyof typeof wuxingShengKe.sheng] === dayMasterWuxing) {
     score += 2; // 月令生扶
-  } else if (wuxingShengKe.ke[monthZhiWuxing] === dayMasterWuxing) {
+  } else if (wuxingShengKe.ke[monthZhiWuxing as keyof typeof wuxingShengKe.ke] === dayMasterWuxing) {
     score -= 2; // 月令克制
   }
 

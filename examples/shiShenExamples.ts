@@ -164,8 +164,8 @@ export function runShiShenTests(): {
     passRate: number;
   };
 } {
-  const shiShenCalculationTests = [];
-  const shenQiangTests = [];
+  const shiShenCalculationTests: any[] = [];
+  const shenQiangTests: any[] = [];
 
   // 测试十神计算
   shiShenRelationTests.forEach(test => {

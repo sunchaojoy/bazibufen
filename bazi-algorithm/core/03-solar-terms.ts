@@ -213,7 +213,7 @@ export function getJieQiByDate(date: Date): JieQi | null {
   if (nearestJieQi && minDiff <= 7 * 24 * 60 * 60 * 1000) {
     return {
       name: nearestJieQi.name,
-      datetime: nearestJieqi.datetime,
+      datetime: nearestJieQi.datetime,
       angle: nearestJieQi.angle
     };
   }

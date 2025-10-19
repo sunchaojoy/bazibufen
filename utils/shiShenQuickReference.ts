@@ -262,14 +262,14 @@ export function getShiShenRelation(shiShen1: string, shiShen2: string): {
   description: string;
 } | null {
   // 检查相生关系
-  if (shiShenShengKeQuick.生[shiShen1] === shiShen2) {
+  if (shiShenShengKeQuick.生[shiShen1 as keyof typeof shiShenShengKeQuick.生] === shiShen2) {
     return {
       relation: '相生',
       description: `${shiShen1}生${shiShen2}，有助益作用`
     };
   }
 
-  if (shiShenShengKeQuick.生[shiShen2] === shiShen1) {
+  if (shiShenShengKeQuick.生[shiShen2 as keyof typeof shiShenShengKeQuick.生] === shiShen1) {
     return {
       relation: '被生',
       description: `${shiShen2}生${shiShen1}，得到助益`
@@ -277,14 +277,14 @@ export function getShiShenRelation(shiShen1: string, shiShen2: string): {
   }
 
   // 检查相克关系
-  if (shiShenShengKeQuick.克[shiShen1] === shiShen2) {
+  if (shiShenShengKeQuick.克[shiShen1 as keyof typeof shiShenShengKeQuick.克] === shiShen2) {
     return {
       relation: '相克',
       description: `${shiShen1}克${shiShen2}，有抑制作用`
     };
   }
 
-  if (shiShenShengKeQuick.克[shiShen2] === shiShen1) {
+  if (shiShenShengKeQuick.克[shiShen2 as keyof typeof shiShenShengKeQuick.克] === shiShen1) {
     return {
       relation: '被克',
       description: `${shiShen2}克${shiShen1}，受到抑制`
